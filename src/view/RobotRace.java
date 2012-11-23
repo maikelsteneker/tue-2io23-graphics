@@ -2,6 +2,8 @@ package view;
 
 
 import java.awt.Color;
+import java.awt.Point;
+import java.awt.event.*;
 import javax.media.opengl.GL;
 import static javax.media.opengl.GL2.*;
 import static java.lang.Math.*;
@@ -10,6 +12,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.media.opengl.GL2;
+import javax.media.opengl.awt.GLJPanel;
 import model.*;
 
 /**
@@ -47,12 +50,18 @@ public class RobotRace extends Base {
 
     double fovy = -1;
     Game game;
+    ClickListener clickListener;
+    
     /**
      * Called upon the start of the application. Primarily used to configure
      * OpenGL.
      */
     @Override
     public void initialize() {
+        GLJPanel glPanel = (GLJPanel) frame.glPanel;
+        clickListener = new ClickListener();
+        glPanel.addMouseListener(clickListener);
+        
         // Enable blending.
         gl.glEnable(GL_BLEND);
         gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -82,6 +91,7 @@ public class RobotRace extends Base {
         } catch (Exception ex) {
             Logger.getLogger(RobotRace.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
     }
 
     /**
@@ -136,7 +146,7 @@ public class RobotRace extends Base {
     @Override
     public void drawScene() {
         //save current position
-        gl.glPushMatrix();
+        //gl.glPushMatrix();
 
         // Background color.
         gl.glClearColor(1f, 1f, 1f, 0f);
@@ -171,9 +181,11 @@ public class RobotRace extends Base {
         //draw grid
         //drawGrid();
 
+        
+*/
         // Axis Frame
         drawAxisFrame();
-*/
+        
         //draw robots
         /*
          * gl.glPushMatrix(); gl.glTranslatef(-NUMROBOTS / 2, 0, 0); for (Robot
@@ -182,6 +194,7 @@ public class RobotRace extends Base {
          */
         gl.glColor3f(1, 1, 1);
         GameMap map = game.getMap();
+        gl.glPushMatrix();
         for (int i = 0; i < map.getHeight(); i++) {
             for (int j = 0; j < map.getWidth(); j++) {
                 Tile tile = map.getTile(i, j);
@@ -204,7 +217,13 @@ public class RobotRace extends Base {
             }
             gl.glTranslatef(-map.getHeight(), 1, 0);
         }
+        gl.glPopMatrix();
         
+        if (clickListener.x != -1) {
+            handleMouseClick(clickListener.x, clickListener.y);
+            //clickListener.x = -1;
+            //clickListener.y = -1;
+        }
     }
 
     public void drawArrow() {
@@ -245,6 +264,63 @@ public class RobotRace extends Base {
             drawArrow();
             gl.glPopMatrix();
         }
+    }
+    
+    
+
+        private void handleMouseClick(int x, int y) {
+            gl.glPushMatrix();
+            gl.glTranslatef(x, y, 0);
+            glut.glutSolidTeapot(5);
+            gl.glPopMatrix();
+            
+            double[] model = new double[16];
+            gl.glGetDoublev(GL_MODELVIEW_MATRIX, model, 0);
+            double[] proj = new double[16];
+            gl.glGetDoublev(GL_PROJECTION_MATRIX, proj, 0);
+            int[] view = new int[4];
+            gl.glGetIntegerv(GL_VIEWPORT, view, 0);
+            double[] objPos = new double[3];
+            glu.gluUnProject(x, view[3] - y - 1, 0, model, 0, proj, 0, view, 0, objPos, 0);
+            /*gl.glBegin(GL_LINES);
+            gl.glVertex3d(objPos[0], objPos[1], objPos[2]);
+            gl.glVertex3d(objPos[0], objPos[1], objPos[2] + 100);
+            gl.glEnd();*/
+            gl.glPushMatrix();
+            gl.glTranslated(objPos[0], objPos[1], objPos[2]);
+            glut.glutSolidTeapot(0.5f);
+            gl.glPopMatrix();
+            System.out.println(objPos[0] + "," + objPos[1] + "," + objPos[2]);
+        }
+    
+    private final class ClickListener implements MouseListener {
+        
+        int x = -1, y = -1;
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            x = e.getX();
+            y = e.getY();
+            System.out.println(x + "," + y);
+            //handleMouseClick(e.getPoint());
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+        }
+        
     }
     
     /**

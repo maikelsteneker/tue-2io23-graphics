@@ -81,6 +81,8 @@ abstract public class Base {
     // Textures.
     protected Texture track, brick, head, torso;
     
+    MainFrame frame;
+    
     /**
      * Constructs base class.
      */
@@ -97,7 +99,7 @@ abstract public class Base {
         }
         
         // GUI frame.
-        MainFrame frame = new MainFrame(gs);
+        frame = new MainFrame(gs);
         
         // OpenGL utility functions.
         this.glu = new GLU();
