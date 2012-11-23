@@ -7,6 +7,7 @@ import java.awt.event.*;
 import javax.media.opengl.GL;
 import static javax.media.opengl.GL2.*;
 import static java.lang.Math.*;
+import java.nio.FloatBuffer;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
@@ -51,6 +52,7 @@ public class RobotRace extends Base {
     double fovy = -1;
     Game game;
     ClickListener clickListener;
+    Set<Vector> clickPoints = new HashSet<Vector>();
     
     /**
      * Called upon the start of the application. Primarily used to configure
@@ -221,8 +223,15 @@ public class RobotRace extends Base {
         
         if (clickListener.x != -1) {
             handleMouseClick(clickListener.x, clickListener.y);
-            //clickListener.x = -1;
-            //clickListener.y = -1;
+            clickListener.x = -1;
+            clickListener.y = -1;
+        }
+        
+        for(Vector v : clickPoints) {
+            gl.glPushMatrix();
+            gl.glTranslated(v.x(), v.y(), v.z());
+            glut.glutSolidTeapot(0.5f);
+            gl.glPopMatrix();
         }
     }
 
@@ -281,7 +290,9 @@ public class RobotRace extends Base {
             int[] view = new int[4];
             gl.glGetIntegerv(GL_VIEWPORT, view, 0);
             double[] objPos = new double[3];
-            glu.gluUnProject(x, view[3] - y - 1, 0, model, 0, proj, 0, view, 0, objPos, 0);
+            FloatBuffer z = FloatBuffer.allocate(1);
+            gl.glReadPixels(x, y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, z);
+            glu.gluUnProject(x, view[3] - y - 1, z.get(), model, 0, proj, 0, view, 0, objPos, 0);
             /*gl.glBegin(GL_LINES);
             gl.glVertex3d(objPos[0], objPos[1], objPos[2]);
             gl.glVertex3d(objPos[0], objPos[1], objPos[2] + 100);
@@ -290,6 +301,8 @@ public class RobotRace extends Base {
             gl.glTranslated(objPos[0], objPos[1], objPos[2]);
             glut.glutSolidTeapot(0.5f);
             gl.glPopMatrix();
+            Vector click = new Vector(objPos[0], objPos[1], objPos[2]);
+            clickPoints.add(click);
             System.out.println(objPos[0] + "," + objPos[1] + "," + objPos[2]);
         }
     
