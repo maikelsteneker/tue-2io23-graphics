@@ -1,6 +1,5 @@
 package view;
 
-
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.*;
@@ -9,6 +8,7 @@ import static javax.media.opengl.GL2.*;
 import static java.lang.Math.*;
 import java.nio.FloatBuffer;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -52,8 +52,8 @@ public class RobotRace extends Base {
     double fovy = -1;
     Game game;
     ClickListener clickListener;
-    Set<Vector> clickPoints = new HashSet<Vector>();
-    
+    Vector clickPoint;
+
     /**
      * Called upon the start of the application. Primarily used to configure
      * OpenGL.
@@ -63,7 +63,7 @@ public class RobotRace extends Base {
         GLJPanel glPanel = (GLJPanel) frame.glPanel;
         clickListener = new ClickListener();
         glPanel.addMouseListener(clickListener);
-        
+
         // Enable blending.
         gl.glEnable(GL_BLEND);
         gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -81,19 +81,38 @@ public class RobotRace extends Base {
         // Enable textures. 
         gl.glEnable(GL_TEXTURE_2D);
         gl.glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-        
+
         // Create game object
+        Random generator = new Random();
+        TileType[][] types = new TileType[50][50];
+        for (int i = 0; i < types.length; i++) {
+            for (int j = 0; j < types[0].length; j++) {
+                int type = generator.nextInt(3);
+                switch (type) {
+                    case 0:
+                        types[j][i] = TileType.DeepWater;
+                        break;
+                    case 1:
+                        types[j][i] = TileType.Land;
+                        break;
+                    case 2:
+                        types[j][i] = TileType.ShallowWater;
+                        break;
+                }
+            }
+        }
+        GameMap map = new GameMap(types);
         Player p1 = new Player("1");
         Player p2 = new Player("2");
         Set players = new HashSet<Player>();
         players.add(p1);
         players.add(p2);
         try {
-            game = new Game(players);
+            game = new Game(players, map);
         } catch (Exception ex) {
             Logger.getLogger(RobotRace.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
 
     /**
@@ -162,74 +181,75 @@ public class RobotRace extends Base {
         // Set color to black.
         gl.glColor3f(0f, 0f, 0f);
         /*
-          // Unit box around origin. 
-        glut.glutWireCube(1f);
-         
-          // Move in x-direction. 
-        gl.glTranslatef(2f, 0f, 0f);
-         
-          // Rotate 30 degrees, around z-axis. 
-        gl.glRotatef(30f, 0f, 0f, 1f);
-         
-          // Scale in z-direction. 
-        gl.glScalef(1f, 1f, 2f);
-         
-          // Translated, rotated, scaled box. 
-        glut.glutWireCube(1f);
-         
-        //revert back to original position
-        gl.glPopMatrix();
-
-        //draw grid
-        //drawGrid();
-
-        
-*/
+         * // Unit box around origin. glut.glutWireCube(1f);
+         *
+         * // Move in x-direction. gl.glTranslatef(2f, 0f, 0f);
+         *
+         * // Rotate 30 degrees, around z-axis. gl.glRotatef(30f, 0f, 0f, 1f);
+         *
+         * // Scale in z-direction. gl.glScalef(1f, 1f, 2f);
+         *
+         * // Translated, rotated, scaled box. glut.glutWireCube(1f);
+         *
+         * //revert back to original position gl.glPopMatrix();
+         *
+         * //draw grid //drawGrid();
+         *
+         *
+         */
         // Axis Frame
-        drawAxisFrame();
-        
+        //drawAxisFrame();
+
         //draw robots
         /*
          * gl.glPushMatrix(); gl.glTranslatef(-NUMROBOTS / 2, 0, 0); for (Robot
          * r : robots) { gl.glTranslatef(1.0f, 0, 0); r.draw(); }
-        gl.glPopMatrix();
+         * gl.glPopMatrix();
          */
         gl.glColor3f(1, 1, 1);
         GameMap map = game.getMap();
         gl.glPushMatrix();
         for (int i = 0; i < map.getHeight(); i++) {
             for (int j = 0; j < map.getWidth(); j++) {
-                Tile tile = map.getTile(i, j);
-                TileType type = tile.getType();
-    
-                switch(type) {
-                    case DeepWater:
-                        gl.glColor3f(0, 0, 1);
-                        break;
-                    case ShallowWater:
-                        gl.glColor3f(0, 1, 0);
-                        break;
-                    case Land:
-                        gl.glColor3f(1, 0, 0);
-                        break;
-                }
+                if (clickPoint != null && i <= clickPoint.x && clickPoint.x < i + 1 && j <= clickPoint.y && clickPoint.y < j + 1) {
+                    gl.glColor3f(0.75f, 0.75f, 0.75f);
+                    glut.glutSolidCube(1);
+                } else {
+                    Tile tile = map.getTile(i, j);
+                    TileType type = tile.getType();
+
+                    switch (type) {
+                        case DeepWater:
+                            gl.glColor3f(0, 0, 1);
+                            break;
+                        case ShallowWater:
+                            gl.glColor3f(0, 1, 0);
+                            break;
+                        case Land:
+                            gl.glColor3f(1, 0, 0);
+                            break;
+                    }
+                    gl.glScalef(1, 1, 0.1f);
+                    
                 glut.glutSolidCube(1);
-                glut.glutWireCube(1);
+                gl.glScalef(1, 1, 10);
+                }
+
+                //glut.glutWireCube(1);
                 gl.glTranslatef(1, 0, 0);
             }
             gl.glTranslatef(-map.getHeight(), 1, 0);
         }
         gl.glPopMatrix();
-        
+
         if (clickListener.x != -1) {
             handleMouseClick(clickListener.x, clickListener.y);
             clickListener.x = -1;
             clickListener.y = -1;
         }
-        
-        for(Vector v : clickPoints) {
+        if (clickPoint != null) {
             gl.glPushMatrix();
-            gl.glTranslated(v.x(), v.y(), v.z());
+            gl.glTranslated(clickPoint.x(), clickPoint.y(), clickPoint.z());
             glut.glutSolidTeapot(0.5f);
             gl.glPopMatrix();
         }
@@ -274,40 +294,39 @@ public class RobotRace extends Base {
             gl.glPopMatrix();
         }
     }
-    
-    
 
-        private void handleMouseClick(int x, int y) {
-            gl.glPushMatrix();
-            gl.glTranslatef(x, y, 0);
-            glut.glutSolidTeapot(5);
-            gl.glPopMatrix();
-            
-            double[] model = new double[16];
-            gl.glGetDoublev(GL_MODELVIEW_MATRIX, model, 0);
-            double[] proj = new double[16];
-            gl.glGetDoublev(GL_PROJECTION_MATRIX, proj, 0);
-            int[] view = new int[4];
-            gl.glGetIntegerv(GL_VIEWPORT, view, 0);
-            double[] objPos = new double[3];
-            FloatBuffer z = FloatBuffer.allocate(1);
-            gl.glReadPixels(x, y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, z);
-            glu.gluUnProject(x, view[3] - y - 1, z.get(), model, 0, proj, 0, view, 0, objPos, 0);
-            /*gl.glBegin(GL_LINES);
-            gl.glVertex3d(objPos[0], objPos[1], objPos[2]);
-            gl.glVertex3d(objPos[0], objPos[1], objPos[2] + 100);
-            gl.glEnd();*/
-            gl.glPushMatrix();
-            gl.glTranslated(objPos[0], objPos[1], objPos[2]);
-            glut.glutSolidTeapot(0.5f);
-            gl.glPopMatrix();
-            Vector click = new Vector(objPos[0], objPos[1], objPos[2]);
-            clickPoints.add(click);
-            System.out.println(objPos[0] + "," + objPos[1] + "," + objPos[2]);
-        }
-    
+    private void handleMouseClick(int x, int y) {
+        gl.glPushMatrix();
+        gl.glTranslatef(x, y, 0);
+        glut.glutSolidTeapot(5);
+        gl.glPopMatrix();
+
+        double[] model = new double[16];
+        gl.glGetDoublev(GL_MODELVIEW_MATRIX, model, 0);
+        double[] proj = new double[16];
+        gl.glGetDoublev(GL_PROJECTION_MATRIX, proj, 0);
+        int[] view = new int[4];
+        gl.glGetIntegerv(GL_VIEWPORT, view, 0);
+        double[] objPos = new double[3];
+        FloatBuffer z = FloatBuffer.allocate(1);
+        gl.glReadPixels(x, y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, z);
+        glu.gluUnProject(x, view[3] - y - 1, z.get(), model, 0, proj, 0, view, 0, objPos, 0);
+        /*
+         * gl.glBegin(GL_LINES); gl.glVertex3d(objPos[0], objPos[1], objPos[2]);
+         * gl.glVertex3d(objPos[0], objPos[1], objPos[2] + 100);
+            gl.glEnd();
+         */
+        gl.glPushMatrix();
+        gl.glTranslated(objPos[0], objPos[1], objPos[2]);
+        glut.glutSolidTeapot(0.5f);
+        gl.glPopMatrix();
+        Vector click = new Vector(objPos[0], objPos[1], objPos[2]);
+        clickPoint = click;
+        System.out.println(objPos[0] + "," + objPos[1] + "," + objPos[2]);
+    }
+
     private final class ClickListener implements MouseListener {
-        
+
         int x = -1, y = -1;
 
         @Override
@@ -333,9 +352,8 @@ public class RobotRace extends Base {
         @Override
         public void mouseExited(MouseEvent e) {
         }
-        
     }
-    
+
     /**
      * Main program execution body, delegates to an instance of the RobotRace
      * implementation.
