@@ -215,13 +215,7 @@ public class RobotRace extends Base {
          */
         // Axis Frame
         //drawAxisFrame();
-
-        //draw robots
-        /*
-         * gl.glPushMatrix(); gl.glTranslatef(-NUMROBOTS / 2, 0, 0); for (Robot
-         * r : robots) { gl.glTranslatef(1.0f, 0, 0); r.draw(); }
-         * gl.glPopMatrix();
-         */
+        
         gl.glColor3f(1, 1, 1);
         GameMap map = game.getMap();
         gl.glPushMatrix();
@@ -314,7 +308,7 @@ public class RobotRace extends Base {
         int buffsize = 64;
         IntBuffer buff = IntBuffer.allocate(buffsize);
         gl.glSelectBuffer(buffsize, buff);
-        IntBuffer view = IntBuffer.allocate(1);
+        IntBuffer view = IntBuffer.allocate(4);
         gl.glGetIntegerv(GL_VIEWPORT, view);
         gl.glRenderMode(GL_SELECT);
         gl.glInitNames();
@@ -336,7 +330,7 @@ public class RobotRace extends Base {
         int hits = gl.glRenderMode(GL_RENDER);
         System.out.println("Number of hits: " + hits);
         for (int i = 0; i < hits; i++) {
-            System.out.print(i);
+            System.out.print(buff.get(i));
             System.out.print(",");
         }
 
