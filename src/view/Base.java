@@ -41,10 +41,11 @@ abstract public class Base {
     static public float MOUSE_WHEEL_FACTOR = 1.2f;
     
     // Minimum value of theta.
-    static public float THETA_MIN = -(float) Math.PI / 2f;
+    static private float EPS = 0.01f;
+    static public float THETA_MIN = -(float) Math.PI / 2f + EPS;
     
     // Maximum value of theta.
-    static public float THETA_MAX = (float) Math.PI / 2f;
+    static public float THETA_MAX = (float) Math.PI / 2f - EPS;
     
     // Ratio of distance in pixels dragged and radial change of camera.
     static public float DRAG_PIXEL_TO_RADIAN = 0.025f;
