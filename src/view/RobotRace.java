@@ -84,7 +84,7 @@ public class RobotRace extends Base {
 
         // Create game object
         Random generator = new Random();
-        TileType[][] types = new TileType[50][50];
+        TileType[][] types = new TileType[5][5];
         for (int i = 0; i < types.length; i++) {
             for (int j = 0; j < types[0].length; j++) {
                 int type = generator.nextInt(3);
@@ -209,9 +209,13 @@ public class RobotRace extends Base {
         gl.glColor3f(1, 1, 1);
         GameMap map = game.getMap();
         gl.glPushMatrix();
+        gl.glTranslatef(0.5f, 0.5f, 0);
         for (int i = 0; i < map.getHeight(); i++) {
             for (int j = 0; j < map.getWidth(); j++) {
-                if (clickPoint != null && i <= clickPoint.x && clickPoint.x < i + 1 && j <= clickPoint.y && clickPoint.y < j + 1) {
+                System.out.println((clickPoint == null) ? "" : "(" + clickPoint.x + "," + clickPoint.y + ")");
+                
+                gl.glLoadName(i*10+j);
+                if (clickPoint != null && i <= clickPoint.y && clickPoint.y < i + 1 && j <= clickPoint.x && clickPoint.x < j + 1) {
                     gl.glColor3f(0.75f, 0.75f, 0.75f);
                     glut.glutSolidCube(1);
                 } else {
@@ -247,12 +251,13 @@ public class RobotRace extends Base {
             clickListener.x = -1;
             clickListener.y = -1;
         }
+        /*
         if (clickPoint != null) {
             gl.glPushMatrix();
             gl.glTranslated(clickPoint.x(), clickPoint.y(), clickPoint.z());
             glut.glutSolidTeapot(0.5f);
             gl.glPopMatrix();
-        }
+        }*/
     }
 
     public void drawArrow() {
@@ -316,13 +321,15 @@ public class RobotRace extends Base {
          * gl.glVertex3d(objPos[0], objPos[1], objPos[2] + 100);
             gl.glEnd();
          */
+        /*
         gl.glPushMatrix();
         gl.glTranslated(objPos[0], objPos[1], objPos[2]);
         glut.glutSolidTeapot(0.5f);
         gl.glPopMatrix();
+        */
         Vector click = new Vector(objPos[0], objPos[1], objPos[2]);
         clickPoint = click;
-        System.out.println(objPos[0] + "," + objPos[1] + "," + objPos[2]);
+        //System.out.println(objPos[0] + "," + objPos[1] + "," + objPos[2]);
     }
 
     private final class ClickListener implements MouseListener {
@@ -333,7 +340,7 @@ public class RobotRace extends Base {
         public void mouseClicked(MouseEvent e) {
             x = e.getX();
             y = e.getY();
-            System.out.println(x + "," + y);
+            //System.out.println(x + "," + y);
             //handleMouseClick(e.getPoint());
         }
 
