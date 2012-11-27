@@ -32,7 +32,7 @@ import javax.swing.UIManager;
 abstract public class Base {
     
     // Library version number.
-    static public int LIBRARY_VERSION = 2;
+    static public int LIBRARY_VERSION = 'M'; //Maikel's version
     
     // Minimum distance of camera to center point.
     static public float MIN_CAMERA_DISTANCE = 1f;
@@ -41,7 +41,7 @@ abstract public class Base {
     static public float MOUSE_WHEEL_FACTOR = 1.2f;
     
     // Minimum value of theta.
-    static private float EPS = 0.01f;
+    final static private float EPS = 0.01f;
     static public float THETA_MIN = -(float) Math.PI / 2f + EPS;
     
     // Maximum value of theta.

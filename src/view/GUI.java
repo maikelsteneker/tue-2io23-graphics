@@ -23,7 +23,6 @@ public class GUI extends Base {
     double fov = 90;
     Game game;
     ClickListener clickListener;
-    Vector clickPoint;
     int clicki = -1, clickj = -1;
 
     /**
@@ -164,11 +163,13 @@ public class GUI extends Base {
         gl.glTranslatef(0.5f, 0.5f, 0);
         for (int i = 0; i < map.getHeight(); i++) {
             for (int j = 0; j < map.getWidth(); j++) {
-
                 gl.glLoadName(i * map.getHeight() + j + 1);
                 if (clicki == i && clickj == j) {
+                    gl.glPushMatrix();
+                    gl.glTranslatef(0, 0, 0.5f);
                     gl.glColor3f(0.75f, 0.75f, 0.75f);
                     glut.glutSolidCube(1);
+                    gl.glPopMatrix();
                 } else {
                     Tile tile = map.getTile(i, j);
                     TileType type = tile.getType();
@@ -263,27 +264,20 @@ public class GUI extends Base {
         gl.glMatrixMode(GL_PROJECTION);
         gl.glPopMatrix();
 
-
-
         int hits = gl.glRenderMode(GL_RENDER);
-        System.out.println("Number of hits: " + hits);
-        for (int i = 0; i < buffsize; i++) {
-            System.out.print(buff.get(i));
-            System.out.print(",");
-        }
-        System.out.println();
         int clickcode = 0;
+
+        //get last element (N.B. usually i=3 is the actual correct value)
         for (int i = buffsize - 1; i >= 0; i--) {
             if (buff.get(i) != 0) {
                 clickcode = buff.get(i);
                 break;
             }
         }
-        
         int h = game.getMap().getHeight();
         clicki = hits > 0 ? (clickcode - 1) / h : -1;
         clickj = hits > 0 ? (clickcode - 1) % h : -1;
-        
+
         gl.glMatrixMode(GL_MODELVIEW);
     }
 
@@ -313,7 +307,7 @@ public class GUI extends Base {
         public void mouseExited(MouseEvent e) {
         }
     }
-    
+
     public static void main(String args[]) {
         new GUI();
     }

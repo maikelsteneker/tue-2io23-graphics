@@ -44,9 +44,9 @@ public class GlobalState {
         tAnim = -1;
         cnt = Vector.O;
         vDist = 10f;
-        vWidth = 10f;
-        phi = 0f;
-        theta = 0f;
+        vWidth = 50f;
+        phi = (float) ((float) 1.25 * Math.PI);
+        theta = 0.25f * Base.THETA_MAX;
         persp = false;
         camMode = 0;
         lightCamera = false;
