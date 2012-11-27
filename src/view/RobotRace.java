@@ -55,6 +55,7 @@ public class RobotRace extends Base {
     Game game;
     ClickListener clickListener;
     Vector clickPoint;
+    int clicki = -1, clickj = -1;
 
     /**
      * Called upon the start of the application. Primarily used to configure
@@ -86,7 +87,7 @@ public class RobotRace extends Base {
 
         // Create game object
         Random generator = new Random();
-        TileType[][] types = new TileType[5][5];
+        TileType[][] types = new TileType[50][50];
         for (int i = 0; i < types.length; i++) {
             for (int j = 0; j < types[0].length; j++) {
                 int type = generator.nextInt(3);
@@ -215,7 +216,7 @@ public class RobotRace extends Base {
          */
         // Axis Frame
         //drawAxisFrame();
-        
+
         gl.glColor3f(1, 1, 1);
         GameMap map = game.getMap();
         gl.glPushMatrix();
@@ -224,8 +225,9 @@ public class RobotRace extends Base {
             for (int j = 0; j < map.getWidth(); j++) {
                 //System.out.println((clickPoint == null) ? "" : "(" + clickPoint.x + "," + clickPoint.y + ")");
 
-                gl.glLoadName(i * 10 + j);
-                if (clickPoint != null && i <= clickPoint.y && clickPoint.y < i + 1 && j <= clickPoint.x && clickPoint.x < j + 1) {
+                gl.glLoadName(i * map.getHeight() + j + 1);
+                //if (clickPoint != null && i <= clickPoint.y && clickPoint.y < i + 1 && j <= clickPoint.x && clickPoint.x < j + 1) {
+                if (clicki == i && clickj == j) {
                     gl.glColor3f(0.75f, 0.75f, 0.75f);
                     glut.glutSolidCube(1);
                 } else {
@@ -304,7 +306,7 @@ public class RobotRace extends Base {
     }
 
     private void handleMouseClick(int x, int y) {
-        y = gs.h-y;
+        y = gs.h - y;
         int buffsize = 64;
         IntBuffer buff = IntBuffer.allocate(buffsize);
         gl.glSelectBuffer(buffsize, buff);
@@ -318,23 +320,40 @@ public class RobotRace extends Base {
         gl.glPushMatrix();
         gl.glLoadIdentity();
         glu.gluPickMatrix(x, y, 1.0, 1.0, view);
-        glu.gluPerspective(60, 1.0, 0.0001, 1000.0);
+        if (gs.persp) {
+            //glu.gluPerspective(60, 1.0, 0.0001, 1000.0);
+            glu.gluPerspective(toDegrees(fovy), gs.w / gs.h, 0.1, 1000);
+        } else {
+            float height = gs.vWidth / (gs.w / gs.h);
+            gl.glOrtho(-0.5 * gs.vWidth, 0.5 * gs.vWidth, -0.5 * height, 0.5 * height, 0.1, 1000);
+        }
         gl.glMatrixMode(GL_MODELVIEW);
         //gl.glswap
         draw();
         gl.glMatrixMode(GL_PROJECTION);
- 	gl.glPopMatrix();
+        gl.glPopMatrix();
 
 
 
         int hits = gl.glRenderMode(GL_RENDER);
         System.out.println("Number of hits: " + hits);
-        for (int i = 0; i < hits; i++) {
+        for (int i = 0; i < buffsize; i++) {
             System.out.print(buff.get(i));
             System.out.print(",");
         }
-
         System.out.println();
+        int clickcode = 0;
+        for (int i = buffsize - 1; i >= 0; i--) {
+            if (buff.get(i) != 0) {
+                clickcode = buff.get(i);
+                break;
+            }
+        }
+        
+        int h = game.getMap().getHeight();
+        clicki = hits > 0 ? (clickcode - 1) / h : -1;
+        clickj = hits > 0 ? (clickcode - 1) % h : -1;
+        
         gl.glMatrixMode(GL_MODELVIEW);
     }
 
