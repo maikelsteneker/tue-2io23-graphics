@@ -80,7 +80,8 @@ abstract public class Base {
     private long startTime;
     
     // Textures.
-    protected Texture track, brick, head, torso;
+    //protected Texture track, brick, head, torso;
+    protected Texture land, shallowWater, deepWater, empty;
     
     MainFrame frame;
     
@@ -178,10 +179,10 @@ abstract public class Base {
             gl = drawable.getGL().getGL2();
             
             // Try to load textures.
-            track = loadTexture("track.jpg");
-            brick = loadTexture("brick.jpg");
-            head = loadTexture("head.jpg");
-            torso = loadTexture("torso.jpg");
+            land = loadTexture("textures/land.jpg");
+            shallowWater = loadTexture("textures/shallow.jpg");
+            deepWater = loadTexture("textures/deep.jpg");
+            empty = loadTexture("textures/empty.jpg");
             
             // Print library version number.
             System.out.println("Using RobotRace library version " + LIBRARY_VERSION);

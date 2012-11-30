@@ -123,7 +123,7 @@ public class GUI extends Base {
         gl.glEnable(GL_LIGHTING); //enable lighting (lighting influences color)
         gl.glEnable(GL_LIGHT0); //enable light source 0
         //gl.glLoadIdentity();
-        float[] location = {(float) eye.x(), (float) eye.y(), (float) eye.z()};
+        float[] location = {(float)eye.x(), (float)eye.y(), (float)eye.z(), 1};
         gl.glLightfv(GL_LIGHT0, GL_POSITION, location, 0); //set location of ls0
         gl.glEnable(GL_COLOR_MATERIAL); //enable materials (material influences color)
     }
@@ -142,6 +142,42 @@ public class GUI extends Base {
             handleMouseClick(x, y);
         }
         draw();
+        /*gl.glColor3f(1f, 1f, 1f);
+  deepWater.bind(gl);
+  gl.glBegin(GL_QUADS);
+  gl.glTexCoord2d(0, 0);
+  gl.glVertex3d(0, 0, 0);
+  gl.glTexCoord2d(1, 0);
+  gl.glVertex3d(1, 0, 0);
+  gl.glTexCoord2d(1, 1);
+  gl.glVertex3d(1, 1, 0);
+  gl.glTexCoord2d(0, 1);
+  gl.glVertex3d(0, 1, 0);
+  gl.glEnd();
+  gl.glTranslatef(1, 1, 0);
+  shallowWater.bind(gl);
+  gl.glBegin(GL_QUADS);
+  gl.glTexCoord2d(0, 0);
+  gl.glVertex3d(0, 0, 0);
+  gl.glTexCoord2d(1, 0);
+  gl.glVertex3d(1, 0, 0);
+  gl.glTexCoord2d(1, 1);
+  gl.glVertex3d(1, 1, 0);
+  gl.glTexCoord2d(0, 1);
+  gl.glVertex3d(0, 1, 0);
+  gl.glEnd();
+  gl.glTranslatef(1, 1, 0);
+    land.bind(gl);
+  gl.glBegin(GL_QUADS);
+  gl.glTexCoord2d(0, 0);
+  gl.glVertex3d(0, 0, 0);
+  gl.glTexCoord2d(1, 0);
+  gl.glVertex3d(1, 0, 0);
+  gl.glTexCoord2d(1, 1);
+  gl.glVertex3d(1, 1, 0);
+  gl.glTexCoord2d(0, 1);
+  gl.glVertex3d(0, 1, 0);
+  gl.glEnd();*/
     }
 
     private void draw() {
@@ -156,18 +192,21 @@ public class GUI extends Base {
 
         // Set color to black.
         gl.glColor3f(0f, 0f, 0f);
-
+        
         gl.glColor3f(1, 1, 1);
         GameMap map = game.getMap();
         gl.glPushMatrix();
-        gl.glTranslatef(0.5f, 0.5f, 0);
+        //gl.glTranslatef(0.5f, 0.5f, 0);
         for (int i = 0; i < map.getHeight(); i++) {
             for (int j = 0; j < map.getWidth(); j++) {
                 gl.glLoadName(i * map.getHeight() + j + 1);
                 if (clicki == i && clickj == j) {
                     gl.glPushMatrix();
-                    gl.glTranslatef(0, 0, 0.5f);
+                    //gl.glTranslatef(0, 0, 0.5f);
                     gl.glColor3f(0.75f, 0.75f, 0.75f);
+                    gl.glTranslatef(0.5f, 0.5f, 0);
+                    empty.bind(gl);
+                    gl.glScalef(1, 1, 0f);
                     glut.glutSolidCube(1);
                     gl.glPopMatrix();
                 } else {
@@ -176,19 +215,33 @@ public class GUI extends Base {
 
                     switch (type) {
                         case DeepWater:
-                            gl.glColor3f(0, 0, 1);
+                            //gl.glColor3f(0, 0, 1);
+                            deepWater.bind(gl);
                             break;
                         case ShallowWater:
-                            gl.glColor3f(0, 1, 0);
+                            //gl.glColor3f(0, 1, 0);
+                            shallowWater.bind(gl);
                             break;
                         case Land:
-                            gl.glColor3f(1, 0, 0);
+                            //gl.glColor3f(1, 0, 0);
+                            land.bind(gl);
                             break;
                     }
-                    gl.glScalef(1, 1, 0.1f);
-
-                    glut.glutSolidCube(1);
-                    gl.glScalef(1, 1, 10);
+                    
+                      gl.glBegin(GL_QUADS);
+  gl.glTexCoord2d(0, 0);
+  gl.glVertex3d(0, 0, 0);
+  gl.glTexCoord2d(1, 0);
+  gl.glVertex3d(1, 0, 0);
+  gl.glTexCoord2d(1, 1);
+  gl.glVertex3d(1, 1, 0);
+  gl.glTexCoord2d(0, 1);
+  gl.glVertex3d(0, 1, 0);
+  gl.glEnd();
+                    
+                    //gl.glScalef(1, 1, 0.1f);
+                    //glut.glutSolidCube(1);
+                    //gl.glScalef(1, 1, 10);
                 }
 
                 gl.glTranslatef(1, 0, 0);
