@@ -123,7 +123,7 @@ public class GUI extends Base {
         gl.glEnable(GL_LIGHTING); //enable lighting (lighting influences color)
         gl.glEnable(GL_LIGHT0); //enable light source 0
         //gl.glLoadIdentity();
-        float[] location = {(float)eye.x(), (float)eye.y(), (float)eye.z(), 1};
+        float[] location = {(float)eye.x() - 0.1f, (float)eye.y(), (float)eye.z() + 0.1f, 1};
         gl.glLightfv(GL_LIGHT0, GL_POSITION, location, 0); //set location of ls0
         gl.glEnable(GL_COLOR_MATERIAL); //enable materials (material influences color)
     }
@@ -212,7 +212,7 @@ public class GUI extends Base {
                 } else {
                     Tile tile = map.getTile(i, j);
                     TileType type = tile.getType();
-
+                    gl.glColor3f(1, 1, 1);
                     switch (type) {
                         case DeepWater:
                             //gl.glColor3f(0, 0, 1);
