@@ -167,13 +167,13 @@ public class GUI extends Base {
         
     gl.glBindTexture(GL_TEXTURE_2D, 0);
         gl.glColor3f(1, 0, 1);
-        /*gl.glBegin(GL_QUADS);
+        gl.glBegin(GL_QUADS);
         float v = 1000;
         gl.glVertex3f(-v, -v, -1);
         gl.glVertex3f(-v, v, -1);
         gl.glVertex3f(v, v, -1);
         gl.glVertex3f(v, -v, -1);
-        gl.glEnd();*/
+        gl.glEnd();
         
         
         gl.glPushMatrix();
@@ -185,10 +185,16 @@ public class GUI extends Base {
                     gl.glPushMatrix();
                     //gl.glTranslatef(0, 0, 0.5f);
                     gl.glColor3f(0.75f, 0.75f, 0.75f);
-                    gl.glTranslatef(0.5f, 0.5f, 0);
+                    //gl.glTranslatef(0.5f, 0.5f, 0);
                     empty.bind(gl);
-                    gl.glScalef(1, 1, 0f);
-                    glut.glutSolidCube(1);
+                    gl.glScalef(1, 1, 0.1f);
+                    //glut.glutSolidCube(1);
+                    gl.glBegin(GL_QUADS);
+                    gl.glVertex3f(0, 0, 0);
+                    gl.glVertex3f(0, 1, 0);
+                    gl.glVertex3f(1, 1, 0);
+                    gl.glVertex3f(1, 0, 0);
+                    gl.glEnd();
                     gl.glPopMatrix();
                 } else {
                     Tile tile = map.getTile(i, j);
@@ -271,6 +277,11 @@ public class GUI extends Base {
             gl.glPopMatrix();
         }
     }
+    
+    /*private void handleMouseClick(int x, int y) {
+        this.clicki = 3;
+        this.clickj = 3;
+    }*/
 
     private void handleMouseClick(int x, int y) {
         y = gs.h - y;
