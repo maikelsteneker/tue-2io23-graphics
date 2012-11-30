@@ -80,7 +80,6 @@ abstract public class Base {
     private long startTime;
     
     // Textures.
-    //protected Texture track, brick, head, torso;
     protected Texture land, shallowWater, deepWater, empty;
     
     MainFrame frame;

@@ -83,7 +83,6 @@ public class GUI extends Base {
         } catch (Exception ex) {
             Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 
     /**
@@ -118,14 +117,6 @@ public class GUI extends Base {
         glu.gluLookAt(eye.x(), eye.y(), eye.z(), // eye point
                 gs.cnt.x(), gs.cnt.y(), gs.cnt.z(), // center point
                 0.0, 0.0, 1.0);   // up axis
-
-        // Enable lighting
-        gl.glEnable(GL_LIGHTING); //enable lighting (lighting influences color)
-        gl.glEnable(GL_LIGHT0); //enable light source 0
-        //gl.glLoadIdentity();
-        float[] location = {(float)eye.x() - 0.1f, (float)eye.y(), (float)eye.z() + 0.1f, 1};
-        gl.glLightfv(GL_LIGHT0, GL_POSITION, location, 0); //set location of ls0
-        gl.glEnable(GL_COLOR_MATERIAL); //enable materials (material influences color)
     }
 
     /**
@@ -141,43 +132,21 @@ public class GUI extends Base {
             clickListener.y = -1;
             handleMouseClick(x, y);
         }
+        
+        gl.glMatrixMode(GL_MODELVIEW);
+        
+        // Enable lighting
+        gl.glEnable(GL_LIGHTING); //enable lighting (lighting influences color)
+        gl.glEnable(GL_LIGHT0); //enable light source 0
+        //gl.glLoadIdentity();
+        float[] location = {game.getMap().getWidth()/2,game.getMap().getHeight()/2,10,1};
+        gl.glLightfv(GL_LIGHT0, GL_POSITION, location, 0); //set location of ls0
+        gl.glEnable(GL_COLOR_MATERIAL); //enable materials (material influences color)
+        gl.glPushMatrix();
+        gl.glTranslatef(location[0], location[1], location[2]);
+        gl.glPopMatrix();
+        
         draw();
-        /*gl.glColor3f(1f, 1f, 1f);
-  deepWater.bind(gl);
-  gl.glBegin(GL_QUADS);
-  gl.glTexCoord2d(0, 0);
-  gl.glVertex3d(0, 0, 0);
-  gl.glTexCoord2d(1, 0);
-  gl.glVertex3d(1, 0, 0);
-  gl.glTexCoord2d(1, 1);
-  gl.glVertex3d(1, 1, 0);
-  gl.glTexCoord2d(0, 1);
-  gl.glVertex3d(0, 1, 0);
-  gl.glEnd();
-  gl.glTranslatef(1, 1, 0);
-  shallowWater.bind(gl);
-  gl.glBegin(GL_QUADS);
-  gl.glTexCoord2d(0, 0);
-  gl.glVertex3d(0, 0, 0);
-  gl.glTexCoord2d(1, 0);
-  gl.glVertex3d(1, 0, 0);
-  gl.glTexCoord2d(1, 1);
-  gl.glVertex3d(1, 1, 0);
-  gl.glTexCoord2d(0, 1);
-  gl.glVertex3d(0, 1, 0);
-  gl.glEnd();
-  gl.glTranslatef(1, 1, 0);
-    land.bind(gl);
-  gl.glBegin(GL_QUADS);
-  gl.glTexCoord2d(0, 0);
-  gl.glVertex3d(0, 0, 0);
-  gl.glTexCoord2d(1, 0);
-  gl.glVertex3d(1, 0, 0);
-  gl.glTexCoord2d(1, 1);
-  gl.glVertex3d(1, 1, 0);
-  gl.glTexCoord2d(0, 1);
-  gl.glVertex3d(0, 1, 0);
-  gl.glEnd();*/
     }
 
     private void draw() {
@@ -195,6 +164,18 @@ public class GUI extends Base {
         
         gl.glColor3f(1, 1, 1);
         GameMap map = game.getMap();
+        
+    gl.glBindTexture(GL_TEXTURE_2D, 0);
+        gl.glColor3f(1, 0, 1);
+        /*gl.glBegin(GL_QUADS);
+        float v = 1000;
+        gl.glVertex3f(-v, -v, -1);
+        gl.glVertex3f(-v, v, -1);
+        gl.glVertex3f(v, v, -1);
+        gl.glVertex3f(v, -v, -1);
+        gl.glEnd();*/
+        
+        
         gl.glPushMatrix();
         //gl.glTranslatef(0.5f, 0.5f, 0);
         for (int i = 0; i < map.getHeight(); i++) {
@@ -313,7 +294,9 @@ public class GUI extends Base {
             gl.glOrtho(-0.5 * gs.vWidth, 0.5 * gs.vWidth, -0.5 * height, 0.5 * height, 0.1, 1000);
         }
         gl.glMatrixMode(GL_MODELVIEW);
+        gl.glPushMatrix();
         draw();
+        gl.glPopMatrix();
         gl.glMatrixMode(GL_PROJECTION);
         gl.glPopMatrix();
 
