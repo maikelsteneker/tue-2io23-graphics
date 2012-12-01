@@ -60,7 +60,7 @@ public final class MainFrame extends javax.swing.JFrame {
         filler7 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(32767, 0));
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("RobotRace");
+        setTitle("Game");
 
         glPanel.setPreferredSize(new java.awt.Dimension(800, 800));
         glPanel.addMouseListener(new java.awt.event.MouseAdapter() {

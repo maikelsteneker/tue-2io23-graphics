@@ -26,8 +26,7 @@ import javax.media.opengl.glu.GLU;
 import javax.swing.UIManager;
 
 /**
- * Handles all of the RobotRace graphics functionality,
- * which should be extended per the Assignments.
+ * Handles all of the graphics functionality.
  */
 abstract public class Base {
     
@@ -184,14 +183,13 @@ abstract public class Base {
             empty = loadTexture("textures/empty.jpg");
             
             // Print library version number.
-            System.out.println("Using RobotRace library version " + LIBRARY_VERSION);
+            System.out.println("Using library version " + LIBRARY_VERSION);
             
             initialize();
         }
     
         /**
-         * Try to load a texture from the given file. The file
-         * should be located in the same folder as RobotRace.java.
+         * Try to load a texture from the given file.
          */
         private Texture loadTexture(String file) {
             Texture result = null;
