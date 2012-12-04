@@ -183,7 +183,10 @@ public class GUI extends Base {
         //gl.glTranslatef(0.5f, 0.5f, 0);
         for (int i = 0; i < map.getHeight(); i++) {
             for (int j = 0; j < map.getWidth(); j++) {
+                // Load unique name for this tile.
                 gl.glLoadName(i * map.getHeight() + j + 1);
+                
+                // Load correct tile texture.
                 if (clicki == i && clickj == j) {
                     gl.glPushMatrix();
                     //gl.glTranslatef(0, 0, 0.5f);
@@ -218,6 +221,7 @@ public class GUI extends Base {
                             break;
                     }
 
+                    // Draw tile.
                     gl.glBegin(GL_QUADS);
                     gl.glTexCoord2d(0, 0);
                     gl.glVertex3d(0, 0, 0);
@@ -229,9 +233,14 @@ public class GUI extends Base {
                     gl.glVertex3d(0, 1, 0);
                     gl.glEnd();
                 }
+                
+                // Draw inhabitants.
+                // TODO: write actual code.
 
+                // Move to the next column.
                 gl.glTranslatef(1, 0, 0);
             }
+            //Move to the next row and back to the first column.
             gl.glTranslatef(-map.getHeight(), 1, 0);
         }
         gl.glPopMatrix();
