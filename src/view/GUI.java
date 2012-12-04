@@ -26,7 +26,7 @@ public class GUI extends Base {
     ClickListener clickListener;
     int clicki = -1, clickj = -1;
     Player player;
-    Vector test = null;
+    Vector vViewChange = null;
 
     /**
      * Called upon the start of the application. Primarily used to configure
@@ -144,7 +144,7 @@ public class GUI extends Base {
             clickListener.y = -1;
             handleMouseClick(x, y);
             player.getCurrentCreature().select(game.getMap().getTile(clicki, clickj));
-            gs.cnt = test.add(new Vector(clickj, clicki, 0));
+            gs.cnt = vViewChange.add(new Vector(clickj, clicki, 0));
             
         }
         gl.glMatrixMode(GL_MODELVIEW);
@@ -195,32 +195,15 @@ public class GUI extends Base {
     private void drawMap(GameMap map) throws GLException {
         gl.glPushMatrix();
         gl.glTranslatef(-map.getHeight() / 2, -map.getWidth() / 2, 0.0f);
-        if(test == null){
-            test = new Vector(-map.getHeight()/2,-map.getWidth()/2, 0);
-            gs.cnt = test;
+        if(vViewChange == null){
+            vViewChange = new Vector(-map.getHeight()/2,-map.getWidth()/2, 0);
+            gs.cnt = vViewChange;
         }
         for (int i = 0; i < map.getHeight(); i++) {
             for (int j = 0; j < map.getWidth(); j++) {
                 // Load unique name for this tile.
                 gl.glLoadName(i * map.getHeight() + j + 1);
 
-                // Load correct tile texture.
-                /*if (clicki == i && clickj == j) {
-                 gl.glPushMatrix();
-                 //gl.glTranslatef(0, 0, 0.5f);
-                 gl.glColor3f(0.75f, 0.75f, 0.75f);
-                 //gl.glTranslatef(0.5f, 0.5f, 0);
-                 empty.bind(gl);
-                 gl.glScalef(1, 1, 0.1f);
-                 //glut.glutSolidCube(1);
-                 gl.glBegin(GL_QUADS);
-                 gl.glVertex3f(0, 0, 0);
-                 gl.glVertex3f(0, 1, 0);
-                 gl.glVertex3f(1, 1, 0);
-                 gl.glVertex3f(1, 0, 0);
-                 gl.glEnd();
-                 gl.glPopMatrix();
-                 } else {*/
                 TileType type = map.getTile(i, j).getType();
                 gl.glColor3f(1, 1, 1);
                 switch (type) {
