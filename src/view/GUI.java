@@ -1,5 +1,6 @@
 package view;
 
+import com.jogamp.opengl.util.gl2.GLUT;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.*;
@@ -165,7 +166,7 @@ public class GUI extends Base {
 
         // Set color to black.
         gl.glColor3f(0f, 0f, 0f);
-        
+
         // Draw layer under map.
         gl.glBindTexture(GL_TEXTURE_2D, 0);
         gl.glColor3f(1, 0, 1);
@@ -188,7 +189,7 @@ public class GUI extends Base {
             for (int j = 0; j < map.getWidth(); j++) {
                 // Load unique name for this tile.
                 gl.glLoadName(i * map.getHeight() + j + 1);
-                
+
                 // Load correct tile texture.
                 if (clicki == i && clickj == j) {
                     gl.glPushMatrix();
@@ -235,17 +236,30 @@ public class GUI extends Base {
                     gl.glVertex3d(0, 1, 0);
                     gl.glEnd();
                 }
-                
+
                 // Draw inhabitants.
+                gl.glPushMatrix();
+                gl.glPushAttrib(GL_CURRENT_BIT);
                 Set<Inhabitant> inhabitants = map.getTile(i, j).getInhabitants();
+                empty.bind(gl);
                 for (Inhabitant inhabitant : inhabitants) {
+                    gl.glPushMatrix();
                     // TODO: replace by more meaningful, non-glut objects.
+                    gl.glTranslatef(0.5f, 0.5f, 0.5f);
+
                     if (inhabitant instanceof LandCreature) {
-                        glut.glutSolidCube(1);
+                        gl.glColor3f(0, 1, 0);
+                        gl.glRotatef(90, 1, 0, 0);
+                        glut.glutSolidTeapot(0.5);
                     } else if (inhabitant instanceof Food) {
-                        glut.glutSolidCylinder(1, 1, 10, 10);
+                        gl.glColor3f(1, 1, 1);
+                        gl.glRotatef(90, 1, 0, 0);
+                        glut.glutSolidTeapot(0.5);
                     }
+                    gl.glPopMatrix();
                 }
+                gl.glPopAttrib();
+                gl.glPopMatrix();
 
                 // Move to the next column.
                 gl.glTranslatef(1, 0, 0);
