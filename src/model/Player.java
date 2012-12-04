@@ -10,25 +10,25 @@ import java.util.Set;
  */
 public class Player {
     private String name;
-    private Set<Creature> creatures;
-    private Creature currentCreature;
+    private Creature[] creatures;
+    private int currentCreatureIndex;
     
     public Player(String name) {
         this.name = name;
-        this.creatures = new HashSet<Creature>();
-        this.currentCreature = null;
-    }
-
-    public Collection<Creature> getCreatures() {
-        return creatures;
+        this.creatures = new Creature[6];
+        this.currentCreatureIndex = 0;
     }
     
-    public void setCreatures(Set<Creature> creatures) {
+    public void setCreatures(Creature[] creatures) {
         this.creatures = creatures;
-        currentCreature = (Creature) creatures.toArray()[0];
+        currentCreatureIndex = 0;
     }
 
     public Creature getCurrentCreature() {
-        return currentCreature;
+        return creatures[currentCreatureIndex];
+    }
+    
+    public int SetCurrentCreature(int index) {
+        return this.currentCreatureIndex = index;
     }
 }

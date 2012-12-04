@@ -83,13 +83,11 @@ public class GUI extends Base {
         map.getTile(2, 2).addInhabitant(s);
         
         Player p1 = new Player("1");
-        Set p1c = new HashSet<Creature>();
-        p1c.add(l);
+        Creature[] p1c = {l};
         p1.setCreatures(p1c);
         
         Player p2 = new Player("2");
-        Set p2c = new HashSet<Creature>();
-        p2c.add(s);
+        Creature[] p2c = {s};
         p2.setCreatures(p2c);
         player = p1;
         Set players = new HashSet<Player>();
