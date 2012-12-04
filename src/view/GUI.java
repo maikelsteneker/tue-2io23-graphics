@@ -15,6 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLDrawable;
+import javax.media.opengl.GLException;
 import javax.media.opengl.awt.GLJPanel;
 import model.*;
 
@@ -161,10 +162,8 @@ public class GUI extends Base {
 
         // Set color to black.
         gl.glColor3f(0f, 0f, 0f);
-
-        gl.glColor3f(1, 1, 1);
-        GameMap map = game.getMap();
-
+        
+        // Draw layer under map.
         gl.glBindTexture(GL_TEXTURE_2D, 0);
         gl.glColor3f(1, 0, 1);
         gl.glBegin(GL_QUADS);
@@ -175,7 +174,11 @@ public class GUI extends Base {
         gl.glVertex3f(v, -v, -1);
         gl.glEnd();
 
+        // Draw map.
+        drawMap(game.getMap());
+    }
 
+    private void drawMap(GameMap map) throws GLException {
         gl.glPushMatrix();
         //gl.glTranslatef(0.5f, 0.5f, 0);
         for (int i = 0; i < map.getHeight(); i++) {
@@ -225,10 +228,6 @@ public class GUI extends Base {
                     gl.glTexCoord2d(0, 1);
                     gl.glVertex3d(0, 1, 0);
                     gl.glEnd();
-
-                    //gl.glScalef(1, 1, 0.1f);
-                    //glut.glutSolidCube(1);
-                    //gl.glScalef(1, 1, 10);
                 }
 
                 gl.glTranslatef(1, 0, 0);
