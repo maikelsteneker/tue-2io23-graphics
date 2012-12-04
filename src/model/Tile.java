@@ -35,4 +35,22 @@ public class Tile {
     public Set<Inhabitant> getInhabitants() {
         return inhabitants;
     }
+
+    /**
+     * Returns the Creature on this Tile, or null if there is no creature on
+     * this tile. Note that there cannot be two creatures on a tile at once.
+     */
+    public Creature getCreature() {
+        for (Inhabitant i : inhabitants) {
+            if (i instanceof Creature) {
+                return (Creature) i;
+            }
+        }
+        return null;
+    }
+
+    public boolean removeInhabitant(Creature c) {
+        c.tile = null;
+        return inhabitants.remove(c);
+    }
 }

@@ -34,4 +34,9 @@ public class Creature extends Inhabitant {
     private void eat(Creature c) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
+
+    public void select(Tile tile) {
+        this.tile.removeInhabitant(this);
+        tile.addInhabitant(this);
+    }
 }

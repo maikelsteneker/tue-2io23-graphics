@@ -26,6 +26,7 @@ public class GUI extends Base {
     Game game;
     ClickListener clickListener;
     int clicki = -1, clickj = -1;
+    Player player;
 
     /**
      * Called upon the start of the application. Primarily used to configure
@@ -74,12 +75,23 @@ public class GUI extends Base {
                 }
             }
         }
+        LandCreature l = new LandCreature();
+        SeaCreature s = new SeaCreature();
         GameMap map = new GameMap(types);
-        map.getTile(0, 0).addInhabitant(new LandCreature());
+        map.getTile(0, 0).addInhabitant(l);
         map.getTile(1, 1).addInhabitant(new Food());
-        map.getTile(2, 2).addInhabitant(new SeaCreature());
+        map.getTile(2, 2).addInhabitant(s);
+        
         Player p1 = new Player("1");
+        Set p1c = new HashSet<Creature>();
+        p1c.add(l);
+        p1.setCreatures(p1c);
+        
         Player p2 = new Player("2");
+        Set p2c = new HashSet<Creature>();
+        p2c.add(s);
+        p2.setCreatures(p2c);
+        player = p1;
         Set players = new HashSet<Player>();
         players.add(p1);
         players.add(p2);
@@ -136,6 +148,7 @@ public class GUI extends Base {
             clickListener.x = -1;
             clickListener.y = -1;
             handleMouseClick(x, y);
+            player.getCurrentCreature().select(game.getMap().getTile(clicki, clickj));
         }
 
         gl.glMatrixMode(GL_MODELVIEW);
@@ -151,6 +164,7 @@ public class GUI extends Base {
         gl.glTranslatef(location[0], location[1], location[2]);
         gl.glPopMatrix();
 
+        // Draw stuff.
         draw();
     }
 
@@ -191,7 +205,7 @@ public class GUI extends Base {
                 gl.glLoadName(i * map.getHeight() + j + 1);
 
                 // Load correct tile texture.
-                if (clicki == i && clickj == j) {
+                /*if (clicki == i && clickj == j) {
                     gl.glPushMatrix();
                     //gl.glTranslatef(0, 0, 0.5f);
                     gl.glColor3f(0.75f, 0.75f, 0.75f);
@@ -206,7 +220,7 @@ public class GUI extends Base {
                     gl.glVertex3f(1, 0, 0);
                     gl.glEnd();
                     gl.glPopMatrix();
-                } else {
+                } else {*/
                     TileType type = map.getTile(i, j).getType();
                     gl.glColor3f(1, 1, 1);
                     switch (type) {
@@ -235,7 +249,7 @@ public class GUI extends Base {
                     gl.glTexCoord2d(0, 1);
                     gl.glVertex3d(0, 1, 0);
                     gl.glEnd();
-                }
+                //}
 
                 // Draw inhabitants.
                 gl.glPushMatrix();
