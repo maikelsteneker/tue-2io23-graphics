@@ -257,16 +257,18 @@ public class GUI extends Base {
                 for (Inhabitant inhabitant : inhabitants) {
                     gl.glPushMatrix();
                     // TODO: replace by more meaningful, non-glut objects.
-                    gl.glTranslatef(0.5f, 0.5f, 0.5f);
+                    gl.glTranslatef(0.5f, 0.5f, 0);
 
                     if (inhabitant instanceof LandCreature) {
                         gl.glColor3f(0, 1, 0);
-                        gl.glRotatef(90, 1, 0, 0);
-                        glut.glutSolidTeapot(0.5);
+                        //gl.glRotatef(90, 1, 0, 0);
+                        //glut.glutSolidTeapot(0.5);
+                        new GraphicalObjects(gl).drawCylinder(0.5f, 2);
                     } else if (inhabitant instanceof Food) {
                         gl.glColor3f(1, 1, 1);
-                        gl.glRotatef(90, 1, 0, 0);
-                        glut.glutSolidTeapot(0.5);
+                        //gl.glRotatef(90, 1, 0, 0);
+                        //glut.glutSolidTeapot(0.5);
+                        new GraphicalObjects(gl).drawCylinder(0.5f, 2);
                     }
                     gl.glPopMatrix();
                 }
