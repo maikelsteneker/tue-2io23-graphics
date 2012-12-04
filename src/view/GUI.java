@@ -22,11 +22,11 @@ import model.*;
 
 public class GUI extends Base {
 
-    double fov = 90;
     Game game;
     ClickListener clickListener;
     int clicki = -1, clickj = -1;
     Player player;
+    Vector test = null;
 
     /**
      * Called upon the start of the application. Primarily used to configure
@@ -81,12 +81,12 @@ public class GUI extends Base {
         map.getTile(0, 0).addInhabitant(l);
         map.getTile(1, 1).addInhabitant(new Food());
         map.getTile(2, 2).addInhabitant(s);
-        
+
         Player p1 = new Player("1");
         Set p1c = new HashSet<Creature>();
         p1c.add(l);
         p1.setCreatures(p1c);
-        
+
         Player p2 = new Player("2");
         Set p2c = new HashSet<Creature>();
         p2c.add(s);
@@ -113,13 +113,8 @@ public class GUI extends Base {
         // Set projection matrix.
         gl.glMatrixMode(GL_PROJECTION);
         gl.glLoadIdentity();
-        if (gs.persp) {
-            glu.gluPerspective(fov, gs.w / gs.h, 0.1, 1000);
-        } else {
-            float height = gs.vWidth / (gs.w / gs.h);
-            gl.glOrtho(-0.5 * gs.vWidth, 0.5 * gs.vWidth, -0.5 * height, 0.5 * height, 0.1, 1000);
-        }
-
+        float height = gs.vWidth / (gs.w / gs.h);
+        gl.glOrtho(-0.5 * gs.vWidth, 0.5 * gs.vWidth, -0.5 * height, 0.5 * height, 0.1, 1000);
         // Set camera.
         gl.glMatrixMode(GL_MODELVIEW);
         gl.glLoadIdentity();
@@ -131,7 +126,7 @@ public class GUI extends Base {
 
         Vector eye = gs.cnt.add(dir.scale(gs.vDist));
 
-        glu.gluLookAt(eye.x(), eye.y(), eye.z(), // eye point
+        glu.gluLookAt(-40f, -40f, 30f, // eye point
                 gs.cnt.x(), gs.cnt.y(), gs.cnt.z(), // center point
                 0.0, 0.0, 1.0);   // up axis
     }
@@ -149,8 +144,9 @@ public class GUI extends Base {
             clickListener.y = -1;
             handleMouseClick(x, y);
             player.getCurrentCreature().select(game.getMap().getTile(clicki, clickj));
+            gs.cnt = test.add(new Vector(clickj, clicki, 0));
+            
         }
-
         gl.glMatrixMode(GL_MODELVIEW);
 
         // Enable lighting
@@ -198,7 +194,11 @@ public class GUI extends Base {
 
     private void drawMap(GameMap map) throws GLException {
         gl.glPushMatrix();
-        //gl.glTranslatef(0.5f, 0.5f, 0);
+        gl.glTranslatef(-map.getHeight() / 2, -map.getWidth() / 2, 0.0f);
+        if(test == null){
+            test = new Vector(-map.getHeight()/2,-map.getWidth()/2, 0);
+            gs.cnt = test;
+        }
         for (int i = 0; i < map.getHeight(); i++) {
             for (int j = 0; j < map.getWidth(); j++) {
                 // Load unique name for this tile.
@@ -206,49 +206,49 @@ public class GUI extends Base {
 
                 // Load correct tile texture.
                 /*if (clicki == i && clickj == j) {
-                    gl.glPushMatrix();
-                    //gl.glTranslatef(0, 0, 0.5f);
-                    gl.glColor3f(0.75f, 0.75f, 0.75f);
-                    //gl.glTranslatef(0.5f, 0.5f, 0);
-                    empty.bind(gl);
-                    gl.glScalef(1, 1, 0.1f);
-                    //glut.glutSolidCube(1);
-                    gl.glBegin(GL_QUADS);
-                    gl.glVertex3f(0, 0, 0);
-                    gl.glVertex3f(0, 1, 0);
-                    gl.glVertex3f(1, 1, 0);
-                    gl.glVertex3f(1, 0, 0);
-                    gl.glEnd();
-                    gl.glPopMatrix();
-                } else {*/
-                    TileType type = map.getTile(i, j).getType();
-                    gl.glColor3f(1, 1, 1);
-                    switch (type) {
-                        case DeepWater:
-                            //gl.glColor3f(0, 0, 1);
-                            deepWater.bind(gl);
-                            break;
-                        case ShallowWater:
-                            //gl.glColor3f(0, 1, 0);
-                            shallowWater.bind(gl);
-                            break;
-                        case Land:
-                            //gl.glColor3f(1, 0, 0);
-                            land.bind(gl);
-                            break;
-                    }
+                 gl.glPushMatrix();
+                 //gl.glTranslatef(0, 0, 0.5f);
+                 gl.glColor3f(0.75f, 0.75f, 0.75f);
+                 //gl.glTranslatef(0.5f, 0.5f, 0);
+                 empty.bind(gl);
+                 gl.glScalef(1, 1, 0.1f);
+                 //glut.glutSolidCube(1);
+                 gl.glBegin(GL_QUADS);
+                 gl.glVertex3f(0, 0, 0);
+                 gl.glVertex3f(0, 1, 0);
+                 gl.glVertex3f(1, 1, 0);
+                 gl.glVertex3f(1, 0, 0);
+                 gl.glEnd();
+                 gl.glPopMatrix();
+                 } else {*/
+                TileType type = map.getTile(i, j).getType();
+                gl.glColor3f(1, 1, 1);
+                switch (type) {
+                    case DeepWater:
+                        //gl.glColor3f(0, 0, 1);
+                        deepWater.bind(gl);
+                        break;
+                    case ShallowWater:
+                        //gl.glColor3f(0, 1, 0);
+                        shallowWater.bind(gl);
+                        break;
+                    case Land:
+                        //gl.glColor3f(1, 0, 0);
+                        land.bind(gl);
+                        break;
+                }
 
-                    // Draw tile.
-                    gl.glBegin(GL_QUADS);
-                    gl.glTexCoord2d(0, 0);
-                    gl.glVertex3d(0, 0, 0);
-                    gl.glTexCoord2d(1, 0);
-                    gl.glVertex3d(1, 0, 0);
-                    gl.glTexCoord2d(1, 1);
-                    gl.glVertex3d(1, 1, 0);
-                    gl.glTexCoord2d(0, 1);
-                    gl.glVertex3d(0, 1, 0);
-                    gl.glEnd();
+                // Draw tile.
+                gl.glBegin(GL_QUADS);
+                gl.glTexCoord2d(0, 0);
+                gl.glVertex3d(0, 0, 0);
+                gl.glTexCoord2d(1, 0);
+                gl.glVertex3d(1, 0, 0);
+                gl.glTexCoord2d(1, 1);
+                gl.glVertex3d(1, 1, 0);
+                gl.glTexCoord2d(0, 1);
+                gl.glVertex3d(0, 1, 0);
+                gl.glEnd();
                 //}
 
                 // Draw inhabitants.
@@ -284,46 +284,6 @@ public class GUI extends Base {
         gl.glPopMatrix();
     }
 
-    public void drawArrow() {
-        gl.glPushMatrix();
-
-        gl.glTranslatef(0f, 0, 0.5f);
-        gl.glScalef(0.01f, 0.01f, 1f);
-        glut.glutSolidCube(0.9f);
-
-        gl.glPopMatrix();
-        gl.glPushMatrix();
-
-        gl.glTranslatef(0f, 0f, 1f);
-        glut.glutSolidCone(0.05, 0.1, 15, 2);
-
-        gl.glPopMatrix();
-    }
-
-    public void drawAxisFrame() {
-        if (gs.showAxes) {
-            gl.glColor3f(1.0f, 1.0f, 0);
-            glut.glutSolidSphere(0.10f, 20, 20);
-
-            gl.glPushMatrix();
-            gl.glRotatef(90, 0, 1, 0);
-            gl.glColor3f(1.0f, 0, 0);
-            drawArrow();
-            gl.glPopMatrix();
-
-            gl.glPushMatrix();
-            gl.glRotatef(-90, 1, 0, 0);
-            gl.glColor3f(0, 1.0f, 0);
-            drawArrow();
-            gl.glPopMatrix();
-
-            gl.glPushMatrix();
-            gl.glColor3f(0, 0, 1.0f);
-            drawArrow();
-            gl.glPopMatrix();
-        }
-    }
-
     private void handleMouseClick(int x, int y) {
         y = gs.h - y;
         int buffsize = 64;
@@ -339,12 +299,8 @@ public class GUI extends Base {
         gl.glPushMatrix();
         gl.glLoadIdentity();
         glu.gluPickMatrix(x, y, 1.0, 1.0, view);
-        if (gs.persp) {
-            glu.gluPerspective(fov, gs.w / gs.h, 0.1, 1000);
-        } else {
-            float height = gs.vWidth / (gs.w / gs.h);
-            gl.glOrtho(-0.5 * gs.vWidth, 0.5 * gs.vWidth, -0.5 * height, 0.5 * height, 0.1, 1000);
-        }
+        float height = gs.vWidth / (gs.w / gs.h);
+        gl.glOrtho(-0.5 * gs.vWidth, 0.5 * gs.vWidth, -0.5 * height, 0.5 * height, 0.1, 1000);
         gl.glMatrixMode(GL_MODELVIEW);
         gl.glPushMatrix();
         draw();
