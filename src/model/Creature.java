@@ -9,7 +9,6 @@ public class Creature extends Inhabitant {
     
     public Creature() {
         this.life = 15;
-        boolean x = canSelect();
     }
 
     private boolean canSelect() {

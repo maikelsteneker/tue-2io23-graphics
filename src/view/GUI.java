@@ -74,6 +74,9 @@ public class GUI extends Base {
             }
         }
         GameMap map = new GameMap(types);
+        map.getTile(0, 0).addInhabitant(new LandCreature());
+        map.getTile(1, 1).addInhabitant(new Food());
+        map.getTile(2, 2).addInhabitant(new SeaCreature());
         Player p1 = new Player("1");
         Player p2 = new Player("2");
         Set players = new HashSet<Player>();
@@ -203,8 +206,7 @@ public class GUI extends Base {
                     gl.glEnd();
                     gl.glPopMatrix();
                 } else {
-                    Tile tile = map.getTile(i, j);
-                    TileType type = tile.getType();
+                    TileType type = map.getTile(i, j).getType();
                     gl.glColor3f(1, 1, 1);
                     switch (type) {
                         case DeepWater:
@@ -235,7 +237,15 @@ public class GUI extends Base {
                 }
                 
                 // Draw inhabitants.
-                // TODO: write actual code.
+                Set<Inhabitant> inhabitants = map.getTile(i, j).getInhabitants();
+                for (Inhabitant inhabitant : inhabitants) {
+                    // TODO: replace by more meaningful, non-glut objects.
+                    if (inhabitant instanceof LandCreature) {
+                        glut.glutSolidCube(1);
+                    } else if (inhabitant instanceof Food) {
+                        glut.glutSolidCylinder(1, 1, 10, 10);
+                    }
+                }
 
                 // Move to the next column.
                 gl.glTranslatef(1, 0, 0);

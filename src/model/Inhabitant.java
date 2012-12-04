@@ -4,12 +4,12 @@ package model;
  *
  * @author maikel
  */
-class Inhabitant {
+public class Inhabitant {
 
     Tile tile;
 
     public void setTile(Tile t) throws UseTheOtherMethodException {
-        if (!tile.getInhabitants().contains(this)) {
+        if (!t.getInhabitants().contains(this)) {
             throw new UseTheOtherMethodException();
         }
         this.tile = t;

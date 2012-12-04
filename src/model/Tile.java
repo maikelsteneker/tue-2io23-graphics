@@ -32,7 +32,7 @@ public class Tile {
         return type;
     }
 
-    Set<Inhabitant> getInhabitants() {
+    public Set<Inhabitant> getInhabitants() {
         return inhabitants;
     }
 }
