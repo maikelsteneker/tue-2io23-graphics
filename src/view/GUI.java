@@ -132,20 +132,20 @@ public class GUI extends Base {
             clickListener.y = -1;
             handleMouseClick(x, y);
         }
-        
+
         gl.glMatrixMode(GL_MODELVIEW);
-        
+
         // Enable lighting
+        gl.glPushMatrix();
         gl.glEnable(GL_LIGHTING); //enable lighting (lighting influences color)
         gl.glEnable(GL_LIGHT0); //enable light source 0
-        //gl.glLoadIdentity();
-        float[] location = {game.getMap().getWidth()/2,game.getMap().getHeight()/2,10,1};
+        gl.glLoadIdentity();
+        float[] location = {game.getMap().getWidth() / 2, game.getMap().getHeight() / 2, 10, 1};
         gl.glLightfv(GL_LIGHT0, GL_POSITION, location, 0); //set location of ls0
         gl.glEnable(GL_COLOR_MATERIAL); //enable materials (material influences color)
-        gl.glPushMatrix();
         gl.glTranslatef(location[0], location[1], location[2]);
         gl.glPopMatrix();
-        
+
         draw();
     }
 
@@ -161,11 +161,11 @@ public class GUI extends Base {
 
         // Set color to black.
         gl.glColor3f(0f, 0f, 0f);
-        
+
         gl.glColor3f(1, 1, 1);
         GameMap map = game.getMap();
-        
-    gl.glBindTexture(GL_TEXTURE_2D, 0);
+
+        gl.glBindTexture(GL_TEXTURE_2D, 0);
         gl.glColor3f(1, 0, 1);
         gl.glBegin(GL_QUADS);
         float v = 1000;
@@ -174,8 +174,8 @@ public class GUI extends Base {
         gl.glVertex3f(v, v, -1);
         gl.glVertex3f(v, -v, -1);
         gl.glEnd();
-        
-        
+
+
         gl.glPushMatrix();
         //gl.glTranslatef(0.5f, 0.5f, 0);
         for (int i = 0; i < map.getHeight(); i++) {
@@ -214,18 +214,18 @@ public class GUI extends Base {
                             land.bind(gl);
                             break;
                     }
-                    
-                      gl.glBegin(GL_QUADS);
-  gl.glTexCoord2d(0, 0);
-  gl.glVertex3d(0, 0, 0);
-  gl.glTexCoord2d(1, 0);
-  gl.glVertex3d(1, 0, 0);
-  gl.glTexCoord2d(1, 1);
-  gl.glVertex3d(1, 1, 0);
-  gl.glTexCoord2d(0, 1);
-  gl.glVertex3d(0, 1, 0);
-  gl.glEnd();
-                    
+
+                    gl.glBegin(GL_QUADS);
+                    gl.glTexCoord2d(0, 0);
+                    gl.glVertex3d(0, 0, 0);
+                    gl.glTexCoord2d(1, 0);
+                    gl.glVertex3d(1, 0, 0);
+                    gl.glTexCoord2d(1, 1);
+                    gl.glVertex3d(1, 1, 0);
+                    gl.glTexCoord2d(0, 1);
+                    gl.glVertex3d(0, 1, 0);
+                    gl.glEnd();
+
                     //gl.glScalef(1, 1, 0.1f);
                     //glut.glutSolidCube(1);
                     //gl.glScalef(1, 1, 10);
@@ -277,11 +277,6 @@ public class GUI extends Base {
             gl.glPopMatrix();
         }
     }
-    
-    /*private void handleMouseClick(int x, int y) {
-        this.clicki = 3;
-        this.clickj = 3;
-    }*/
 
     private void handleMouseClick(int x, int y) {
         y = gs.h - y;
