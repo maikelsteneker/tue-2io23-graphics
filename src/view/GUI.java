@@ -34,7 +34,6 @@ public class GUI extends Base {
      */
     @Override
     public void initialize() {
-        makeDisplayList();
         GLJPanel glPanel = (GLJPanel) frame.glPanel;
         clickListener = new ClickListener();
         glPanel.addMouseListener(clickListener);
@@ -59,7 +58,7 @@ public class GUI extends Base {
 
         // Create game object
         Random generator = new Random();
-        TileType[][] types = new TileType[100][100];
+        TileType[][] types = new TileType[50][50];
         for (int i = 0; i < types.length; i++) {
             for (int j = 0; j < types[0].length; j++) {
                 int type = generator.nextInt(3);
@@ -86,7 +85,7 @@ public class GUI extends Base {
         Player p1 = new Player("1");
         Creature[] p1c = {l};
         p1.setCreatures(p1c);
-
+        currentCreature = l;
         Player p2 = new Player("2");
         Creature[] p2c = {s};
         p2.setCreatures(p2c);
@@ -130,21 +129,6 @@ public class GUI extends Base {
                 0.0, 0.0, 1.0);   // up axis
     }
 
-    public void makeDisplayList() {
-        gl.glNewList(1, GL_COMPILE);
-        gl.glBegin(GL_QUADS);
-        gl.glTexCoord2d(0, 0);
-        gl.glVertex3d(0, 0, 0);
-        gl.glTexCoord2d(1, 0);
-        gl.glVertex3d(1, 0, 0);
-        gl.glTexCoord2d(1, 1);
-        gl.glVertex3d(1, 1, 0);
-        gl.glTexCoord2d(0, 1);
-        gl.glVertex3d(0, 1, 0);
-        gl.glEnd();
-        gl.glEndList();
-
-    }
     /**
      * Draws the entire scene.
      */
@@ -157,9 +141,9 @@ public class GUI extends Base {
             clickListener.x = -1;
             clickListener.y = -1;
             handleMouseClick(x, y);
-            gs.cnt = vViewChange.add(new Vector(clickj, clicki, 0));
             player.getCurrentCreature().select(game.getMap().getTile(clicki, clickj));
-
+            gs.cnt = vViewChange.add(new Vector(clickj, clicki, 0));
+            
         }
         gl.glMatrixMode(GL_MODELVIEW);
 
@@ -209,8 +193,8 @@ public class GUI extends Base {
     private void drawMap(GameMap map) throws GLException {
         gl.glPushMatrix();
         gl.glTranslatef(-map.getHeight() / 2, -map.getWidth() / 2, 0.0f);
-        if (vViewChange == null) {
-            vViewChange = new Vector(-map.getHeight() / 2, -map.getWidth() / 2, 0);
+        if(vViewChange == null){
+            vViewChange = new Vector(-map.getHeight()/2,-map.getWidth()/2, 0);
             gs.cnt = vViewChange;
         }
         for (int i = 0; i < map.getHeight(); i++) {
@@ -236,7 +220,16 @@ public class GUI extends Base {
                 }
 
                 // Draw tile.
-                gl.glCallList(1);
+                gl.glBegin(GL_QUADS);
+                gl.glTexCoord2d(0, 0);
+                gl.glVertex3d(0, 0, 0);
+                gl.glTexCoord2d(1, 0);
+                gl.glVertex3d(1, 0, 0);
+                gl.glTexCoord2d(1, 1);
+                gl.glVertex3d(1, 1, 0);
+                gl.glTexCoord2d(0, 1);
+                gl.glVertex3d(0, 1, 0);
+                gl.glEnd();
                 //}
 
                 // Draw inhabitants.
@@ -248,11 +241,13 @@ public class GUI extends Base {
                     gl.glPushMatrix();
                     // TODO: replace by more meaningful, non-glut objects.
                     gl.glTranslatef(0.5f, 0.5f, 0);
+
                     if (inhabitant instanceof LandCreature) {
                         gl.glColor3f(0, 1, 0);
                         //gl.glRotatef(90, 1, 0, 0);
                         //glut.glutSolidTeapot(0.5);
                         new GraphicalObjects(gl).drawCylinder(0.5f, 2);
+                    } else if (inhabitant instanceof Food) {
                         gl.glColor3f(1, 1, 1);
                         //gl.glRotatef(90, 1, 0, 0);
                         //glut.glutSolidTeapot(0.5);
