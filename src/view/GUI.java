@@ -27,6 +27,7 @@ public class GUI extends Base {
     int clicki = -1, clickj = -1;
     Player player;
     Vector vViewChange = null;
+    Creature currentCreature;
 
     /**
      * Called upon the start of the application. Primarily used to configure
@@ -141,7 +142,7 @@ public class GUI extends Base {
             clickListener.x = -1;
             clickListener.y = -1;
             handleMouseClick(x, y);
-            player.getCurrentCreature().select(game.getMap().getTile(clicki, clickj));
+            currentCreature.select(game.getMap().getTile(clicki, clickj));
             gs.cnt = vViewChange.add(new Vector(clickj, clicki, 0));
             
         }
