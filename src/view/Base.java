@@ -1,6 +1,5 @@
 package view;
 
-
 import com.jogamp.opengl.util.FPSAnimator;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
@@ -29,86 +28,69 @@ import javax.swing.UIManager;
  * Handles all of the graphics functionality.
  */
 abstract public class Base {
-    
+
     // Library version number.
     static public int LIBRARY_VERSION = 'M'; //Maikel's version
-    
     // Minimum distance of camera to center point.
     static public float MIN_CAMERA_DISTANCE = 1f;
-    
     // Distance multiplier per mouse wheel tick.
     static public float MOUSE_WHEEL_FACTOR = 1.2f;
-    
     // Minimum value of theta.
     final static private float EPS = 0.01f;
     static public float THETA_MIN = -(float) Math.PI / 2f + EPS;
-    
     // Maximum value of theta.
     static public float THETA_MAX = (float) Math.PI / 2f - EPS;
-    
     // Ratio of distance in pixels dragged and radial change of camera.
     static public float DRAG_PIXEL_TO_RADIAN = 0.025f;
-    
     // Minimum value of vWidth.
     static public float VWIDTH_MIN = 1f;
-    
     // Maximum value of vWidth.
     static public float VWIDTH_MAX = 1000f;
-    
     // Ratio of vertical distance dragged and change of vWidth;
     static public float DRAG_PIXEL_TO_VWIDTH = 0.1f;
-    
     // Extent of center point change based on key input.
     static public float CENTER_POINT_CHANGE = 1f;
-    
     // Desired frames per second.
     static public int FPS = 30;
-    
-    
     // Global state, created at startup.
     protected GlobalState gs;
-    
     // OpenGL reference, continuously updated for correct thread.
     protected GL2 gl;
-    
     // OpenGL utility functions.
     protected GLU glu;
     protected GLUT glut;
-    
     // Start time of animation.
     private long startTime;
-    
     // Textures.
     protected Texture land, shallowWater, deepWater, empty;
-    
     MainFrame frame;
-    
+
     /**
      * Constructs base class.
      */
     public Base() {
         // Global state.
         this.gs = new GlobalState();
-        
+
         // Enable fancy GUI theme.
         try {
             UIManager.setLookAndFeel(
-                "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch(Exception ex) {
+                    "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+        } catch (Exception ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         // GUI frame.
         frame = new MainFrame(gs);
-        
+
         // OpenGL utility functions.
         this.glu = new GLU();
         this.glut = new GLUT();
-        
+
         // Redirect OpenGL listener to the abstract render functions.
         GLJPanel glPanel = (GLJPanel) frame.glPanel;
         glPanel.addGLEventListener(new GLEventDelegate());
-        
+
         // Attach mouse and keyboard listeners.
         GLListener listener = new GLListener();
         glPanel.addMouseListener(listener);
@@ -117,14 +99,14 @@ abstract public class Base {
         glPanel.addKeyListener(listener);
         glPanel.setFocusable(true);
         glPanel.requestFocusInWindow();
-        
+
         // Attach animator to OpenGL panel and begin refresh
         // at the specified number of frames per second.
         final FPSAnimator animator =
                 new FPSAnimator((GLJPanel) frame.glPanel, FPS, true);
         animator.setIgnoreExceptions(false);
         animator.setPrintExceptions(true);
-        
+
         animator.start();
 
         // Stop animator when window is closed.
@@ -133,23 +115,23 @@ abstract public class Base {
             public void windowClosing(WindowEvent e) {
                 animator.stop();
             }
-        });       
+        });
 
         // Show frame.
         frame.setVisible(true);
     }
-    
+
     /**
-     * Called upon the start of the application.
-     * Primarily used to configure OpenGL.
+     * Called upon the start of the application. Primarily used to configure
+     * OpenGL.
      */
     abstract public void initialize();
-    
+
     /**
      * Configures the viewing transform.
      */
     abstract public void setView();
-    
+
     /**
      * Draws the entire scene.
      */
@@ -160,10 +142,10 @@ abstract public class Base {
      */
     public void glVertex(Vector vector) {
         gl.glVertex3d(vector.x(),
-                      vector.y(),
-                      vector.z());
+                vector.y(),
+                vector.z());
     }
-    
+
     /**
      * Delegates OpenGL events to abstract methods.
      */
@@ -175,19 +157,19 @@ abstract public class Base {
         @Override
         public void init(GLAutoDrawable drawable) {
             gl = drawable.getGL().getGL2();
-            
+
             // Try to load textures.
             land = loadTexture("textures/land.jpg");
             shallowWater = loadTexture("textures/shallow.jpg");
             deepWater = loadTexture("textures/deep.jpg");
             empty = loadTexture("textures/empty.jpg");
-            
+
             // Print library version number.
             System.out.println("Using library version " + LIBRARY_VERSION);
-            
+
             initialize();
         }
-    
+
         /**
          * Try to load a texture from the given file.
          */
@@ -197,16 +179,15 @@ abstract public class Base {
             try {
                 // Try to load from local folder.
                 result = TextureIO.newTexture(new File(file), false);
-            } catch(Exception e1) {
+            } catch (Exception e1) {
                 // Try to load from /src folder instead.
                 try {
                     result = TextureIO.newTexture(new File("src/" + file), false);
-                } catch(Exception e2) {
-                    
+                } catch (Exception e2) {
                 }
             }
-            
-            if(result != null) {
+
+            if (result != null) {
                 System.out.println("Loaded " + file);
                 result.enable(gl);
             }
@@ -220,22 +201,16 @@ abstract public class Base {
         @Override
         public void display(GLAutoDrawable drawable) {
             gl = drawable.getGL().getGL2();
-            
-            // Update wall time, and reset if required.
-            if(gs.tAnim < 0) {
-                startTime = System.currentTimeMillis();
-            }
-            gs.tAnim = (float) (System.currentTimeMillis() - startTime) / 1000f;
-            
+
             // Also update view, because global state may have changed.
             setView();
             drawScene();
-            
+
             // Report OpenGL errors.
             int errorCode = gl.glGetError();
-            while(errorCode != GL.GL_NO_ERROR) {
-                System.err.println(errorCode + " " +
-                                   glu.gluErrorString(errorCode));
+            while (errorCode != GL.GL_NO_ERROR) {
+                System.err.println(errorCode + " "
+                        + glu.gluErrorString(errorCode));
                 errorCode = gl.glGetError();
             }
         }
@@ -245,35 +220,33 @@ abstract public class Base {
          */
         @Override
         public void reshape(GLAutoDrawable drawable,
-                            int x, int y,
-                            int width, int height) {
+                int x, int y,
+                int width, int height) {
             gl = drawable.getGL().getGL2();
-            
+
             // Update state.
             gs.w = width;
             gs.h = height;
-            
+
             setView();
         }
 
         @Override
         public void dispose(GLAutoDrawable drawable) {
-            
         }
-
     }
-    
+
     /**
-     * Handles mouse events of the GLJPanel to support the interactive
-     * change of camera angles and distance in the global state.
+     * Handles mouse events of the GLJPanel to support the interactive change of
+     * camera angles and distance in the global state.
      */
     private final class GLListener implements MouseMotionListener,
-                                              MouseListener,
-                                              MouseWheelListener,
-                                              KeyListener {
+            MouseListener,
+            MouseWheelListener,
+            KeyListener {
         // Position of mouse drag source.
+
         private int dragSourceX, dragSourceY;
-        
         // Last mouse button pressed.
         private int mouseButton;
 
@@ -281,21 +254,20 @@ abstract public class Base {
         public void mouseDragged(MouseEvent e) {
             float dX = e.getX() - dragSourceX;
             float dY = e.getY() - dragSourceY;
-            
+
             // Change camera angle when left button is pressed.
-            if(mouseButton == MouseEvent.BUTTON1) {
+            if (mouseButton == MouseEvent.BUTTON1) {
                 gs.phi += dX * DRAG_PIXEL_TO_RADIAN;
                 gs.theta = Math.max(THETA_MIN,
-                                    Math.min(THETA_MAX,
-                                             gs.theta + dY * DRAG_PIXEL_TO_RADIAN));
-            }
-            // Change vWidth when right button is pressed.
-            else if(mouseButton == MouseEvent.BUTTON3) {
+                        Math.min(THETA_MAX,
+                        gs.theta + dY * DRAG_PIXEL_TO_RADIAN));
+            } // Change vWidth when right button is pressed.
+            else if (mouseButton == MouseEvent.BUTTON3) {
                 gs.vWidth = Math.max(VWIDTH_MIN,
-                                     Math.min(VWIDTH_MAX,
-                                              gs.vWidth + dY * DRAG_PIXEL_TO_VWIDTH));
+                        Math.min(VWIDTH_MAX,
+                        gs.vWidth + dY * DRAG_PIXEL_TO_VWIDTH));
             }
-            
+
             dragSourceX = e.getX();
             dragSourceY = e.getY();
         }
@@ -307,9 +279,9 @@ abstract public class Base {
         @Override
         public void mouseWheelMoved(MouseWheelEvent e) {
             gs.vDist = (float) Math.max(MIN_CAMERA_DISTANCE,
-                                        gs.vDist *
-                                        Math.pow(MOUSE_WHEEL_FACTOR,
-                                                 e.getWheelRotation()));
+                    gs.vDist
+                    * Math.pow(MOUSE_WHEEL_FACTOR,
+                    e.getWheelRotation()));
         }
 
         @Override
@@ -343,45 +315,49 @@ abstract public class Base {
         public void keyPressed(KeyEvent e) {
             // Move center point.
             double phiQ = gs.phi + Math.PI / 2.0;
-            
-            switch(e.getKeyChar()) {
+
+            switch (e.getKeyChar()) {
                 // Right.
-                case 'a':   gs.cnt = gs.cnt.subtract(
-                                        new Vector(Math.cos(phiQ), Math.sin(phiQ), 0)
-                                        .scale(CENTER_POINT_CHANGE));
-                            break;
+                case 'a':
+                    gs.cnt = gs.cnt.subtract(
+                            new Vector(Math.cos(phiQ), Math.sin(phiQ), 0)
+                            .scale(CENTER_POINT_CHANGE));
+                    break;
                 // Left.
-                case 'd':   gs.cnt = gs.cnt.add(
-                                        new Vector(Math.cos(phiQ), Math.sin(phiQ), 0)
-                                        .scale(CENTER_POINT_CHANGE));
-                            break;
+                case 'd':
+                    gs.cnt = gs.cnt.add(
+                            new Vector(Math.cos(phiQ), Math.sin(phiQ), 0)
+                            .scale(CENTER_POINT_CHANGE));
+                    break;
                 // Forwards.
-                case 'w':   gs.cnt = gs.cnt.subtract(
-                                        new Vector(Math.cos(gs.phi), Math.sin(gs.phi), 0)
-                                        .scale(CENTER_POINT_CHANGE));
-                            break;
+                case 'w':
+                    gs.cnt = gs.cnt.subtract(
+                            new Vector(Math.cos(gs.phi), Math.sin(gs.phi), 0)
+                            .scale(CENTER_POINT_CHANGE));
+                    break;
                 // Backwards.
-                case 's':   gs.cnt = gs.cnt.add(
-                                        new Vector(Math.cos(gs.phi), Math.sin(gs.phi), 0)
-                                        .scale(CENTER_POINT_CHANGE));
-                            break;
+                case 's':
+                    gs.cnt = gs.cnt.add(
+                            new Vector(Math.cos(gs.phi), Math.sin(gs.phi), 0)
+                            .scale(CENTER_POINT_CHANGE));
+                    break;
                 // Up.
-                case 'q':   gs.cnt = new Vector(gs.cnt.x,
-                                                gs.cnt.y,
-                                                gs.cnt.z + CENTER_POINT_CHANGE);
-                            break;
+                case 'q':
+                    gs.cnt = new Vector(gs.cnt.x,
+                            gs.cnt.y,
+                            gs.cnt.z + CENTER_POINT_CHANGE);
+                    break;
                 // Down.
-                case 'z':   gs.cnt = new Vector(gs.cnt.x,
-                                                gs.cnt.y,
-                                                gs.cnt.z - CENTER_POINT_CHANGE);
-                            break;
+                case 'z':
+                    gs.cnt = new Vector(gs.cnt.x,
+                            gs.cnt.y,
+                            gs.cnt.z - CENTER_POINT_CHANGE);
+                    break;
             }
         }
 
         @Override
         public void keyReleased(KeyEvent e) {
         }
-        
     }
-    
 }
