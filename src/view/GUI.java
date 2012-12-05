@@ -27,6 +27,7 @@ public class GUI extends Base {
     ClickListener clickListener;
     int clicki = -1, clickj = -1;
     Player player;
+    Creature currentCreature;
 
     /**
      * Called upon the start of the application. Primarily used to configure
@@ -85,7 +86,7 @@ public class GUI extends Base {
         Player p1 = new Player("1");
         Creature[] p1c = {l};
         p1.setCreatures(p1c);
-        
+        currentCreature = l;
         Player p2 = new Player("2");
         Creature[] p2c = {s};
         p2.setCreatures(p2c);
@@ -146,7 +147,7 @@ public class GUI extends Base {
             clickListener.x = -1;
             clickListener.y = -1;
             handleMouseClick(x, y);
-            player.getCurrentCreature().select(game.getMap().getTile(clicki, clickj));
+            currentCreature.select(game.getMap().getTile(clicki, clickj));
         }
 
         gl.glMatrixMode(GL_MODELVIEW);
