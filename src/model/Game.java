@@ -8,7 +8,7 @@ import java.util.Set;
  */
 public class Game {
     private GameMap map;
-    private Set<Player> players;
+    public Set<Player> players;
     
     public Game(Set<Player> players) throws InvalidNumberOfPlayersException {
         if (players.size() < 2 && players.size() > 6) {

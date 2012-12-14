@@ -9,7 +9,9 @@ import static javax.media.opengl.GL2.*;
 import static java.lang.Math.*;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.logging.Level;
@@ -28,6 +30,8 @@ public class GUI extends Base {
     Player player;
     Vector vViewChange = null;
     Creature currentCreature;
+    Timer timer = new Timer(30);
+    Map<Creature, CreatureView> creatureViews = new HashMap<Creature, CreatureView>();
 
     /**
      * Called upon the start of the application. Primarily used to configure
@@ -99,6 +103,14 @@ public class GUI extends Base {
         } catch (Exception ex) {
             Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+        creatureViews = new HashMap<Creature, CreatureView>();
+        for (Player p : game.players) {
+            for (Creature c : p.getCreatures()) {
+                CreatureView creatureView = new CreatureView(c, timer);
+                creatureViews.put(c, creatureView);
+            }
+        }
     }
 
     /**
@@ -144,7 +156,7 @@ public class GUI extends Base {
             handleMouseClick(x, y);
             currentCreature.select(game.getMap().getTile(clicki, clickj));
             gs.cnt = vViewChange.add(new Vector(clickj, clicki, 0));
-            
+
         }
         gl.glMatrixMode(GL_MODELVIEW);
 
@@ -193,9 +205,9 @@ public class GUI extends Base {
 
     private void drawMap(GameMap map) throws GLException {
         gl.glPushMatrix();
-        gl.glTranslatef(-map.getHeight() / 2, -map.getWidth() / 2, 0.0f);
-        if(vViewChange == null){
-            vViewChange = new Vector(-map.getHeight()/2,-map.getWidth()/2, 0);
+        //gl.glTranslatef(-map.getHeight() / 2, -map.getWidth() / 2, 0.0f);
+        if (vViewChange == null) {
+            vViewChange = Vector.O;
             gs.cnt = vViewChange;
         }
         for (int i = 0; i < map.getHeight(); i++) {
@@ -243,12 +255,13 @@ public class GUI extends Base {
                     // TODO: replace by more meaningful, non-glut objects.
                     gl.glTranslatef(0.5f, 0.5f, 0);
 
-                    if (inhabitant instanceof LandCreature) {
-                        gl.glColor3f(0, 1, 0);
-                        //gl.glRotatef(90, 1, 0, 0);
-                        //glut.glutSolidTeapot(0.5);
-                        new GraphicalObjects(gl).drawCylinder(0.5f, 2);
-                    } else if (inhabitant instanceof Food) {
+                    /*if (inhabitant instanceof LandCreature) {
+                     gl.glColor3f(0, 1, 0);
+                     //gl.glRotatef(90, 1, 0, 0);
+                     //glut.glutSolidTeapot(0.5);
+                     new GraphicalObjects(gl).drawCylinder(0.5f, 2);
+                     } else */
+                    if (inhabitant instanceof Food) {
                         gl.glColor3f(1, 1, 1);
                         //gl.glRotatef(90, 1, 0, 0);
                         //glut.glutSolidTeapot(0.5);
@@ -264,6 +277,16 @@ public class GUI extends Base {
             }
             //Move to the next row and back to the first column.
             gl.glTranslatef(-map.getHeight(), 1, 0);
+        }
+        gl.glPopMatrix();
+
+        gl.glPushMatrix();
+        for (Player p : game.players) {
+            for (Creature c : p.getCreatures()) {
+                Vector currentLocation = creatureViews.get(c).getCurrentLocation();
+                gl.glTranslated(currentLocation.x(), currentLocation.y(), currentLocation.z());
+                new GraphicalObjects(gl).drawCylinder(0.5f, 2);
+            }
         }
         gl.glPopMatrix();
     }

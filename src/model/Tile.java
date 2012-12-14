@@ -13,6 +13,7 @@ import model.Inhabitant.UseTheOtherMethodException;
 public class Tile {
     private Set<Inhabitant> inhabitants;
     private TileType type;
+    public int x,y;
     
     public Tile(TileType t) {
         this.inhabitants = new HashSet<Inhabitant>();

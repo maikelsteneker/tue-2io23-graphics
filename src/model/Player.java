@@ -20,4 +20,8 @@ public class Player {
     public void setCreatures(Creature[] creatures) {
         this.creatures = creatures;
     }
+    
+    public Creature[] getCreatures() {
+        return creatures;
+    }
 }

@@ -7,6 +7,7 @@ package model;
 public class Inhabitant {
 
     Tile tile;
+    public int x,y;
 
     public void setTile(Tile t) throws UseTheOtherMethodException {
         if (!t.getInhabitants().contains(this)) {

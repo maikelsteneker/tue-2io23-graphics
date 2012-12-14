@@ -6,6 +6,7 @@ package model;
  */
 public class Creature extends Inhabitant {
     private int life;
+    public CreaturePath path;
     
     public Creature() {
         this.life = 15;
