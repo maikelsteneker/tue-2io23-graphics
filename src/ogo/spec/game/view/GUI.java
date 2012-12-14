@@ -1,5 +1,14 @@
-package view;
+package ogo.spec.game.view;
 
+import ogo.spec.game.model.Player;
+import ogo.spec.game.model.Food;
+import ogo.spec.game.model.GameMap;
+import ogo.spec.game.model.Inhabitant;
+import ogo.spec.game.model.LandCreature;
+import ogo.spec.game.model.Game;
+import ogo.spec.game.model.TileType;
+import ogo.spec.game.model.Creature;
+import ogo.spec.game.model.SeaCreature;
 import com.jogamp.opengl.util.gl2.GLUT;
 import java.awt.Color;
 import java.awt.Point;
@@ -20,7 +29,6 @@ import javax.media.opengl.GL2;
 import javax.media.opengl.GLDrawable;
 import javax.media.opengl.GLException;
 import javax.media.opengl.awt.GLJPanel;
-import model.*;
 
 public class GUI extends Base {
 
@@ -69,13 +77,13 @@ public class GUI extends Base {
                 int type = generator.nextInt(3);
                 switch (type) {
                     case 0:
-                        types[j][i] = TileType.DeepWater;
+                        types[j][i] = TileType.DEEP_WATER;
                         break;
                     case 1:
-                        types[j][i] = TileType.Land;
+                        types[j][i] = TileType.LAND;
                         break;
                     case 2:
-                        types[j][i] = TileType.ShallowWater;
+                        types[j][i] = TileType.SHALLOW_WATER;
                         break;
                 }
             }
@@ -83,9 +91,9 @@ public class GUI extends Base {
         LandCreature l = new LandCreature();
         SeaCreature s = new SeaCreature();
         GameMap map = new GameMap(types);
-        map.getTile(0, 0).addInhabitant(l);
-        map.getTile(1, 1).addInhabitant(new Food());
-        map.getTile(2, 2).addInhabitant(s);
+        map.getTile(0, 0).setInhabitant(l);
+        map.getTile(1, 1).setInhabitant(new Food());
+        map.getTile(2, 2).setInhabitant(s);
 
         Player p1 = new Player("1");
         Creature[] p1c = {l};
@@ -95,9 +103,8 @@ public class GUI extends Base {
         Creature[] p2c = {s};
         p2.setCreatures(p2c);
         player = p1;
-        Set players = new HashSet<Player>();
-        players.add(p1);
-        players.add(p2);
+        Player[] players = new Player[2];
+        players[0]=p1;players[1]=p2;
         try {
             game = new Game(players, map);
         } catch (Exception ex) {
@@ -105,8 +112,8 @@ public class GUI extends Base {
         }
 
         creatureViews = new HashMap<Creature, CreatureView>();
-        for (Player p : game.players) {
-            for (Creature c : p.getCreatures()) {
+        for (Player p : game) {
+            for (Creature c : p) {
                 CreatureView creatureView = new CreatureView(c, timer);
                 creatureViews.put(c, creatureView);
             }
@@ -218,15 +225,15 @@ public class GUI extends Base {
                 TileType type = map.getTile(i, j).getType();
                 gl.glColor3f(1, 1, 1);
                 switch (type) {
-                    case DeepWater:
+                    case DEEP_WATER:
                         //gl.glColor3f(0, 0, 1);
                         deepWater.bind(gl);
                         break;
-                    case ShallowWater:
+                    case SHALLOW_WATER:
                         //gl.glColor3f(0, 1, 0);
                         shallowWater.bind(gl);
                         break;
-                    case Land:
+                    case LAND:
                         //gl.glColor3f(1, 0, 0);
                         land.bind(gl);
                         break;
@@ -248,9 +255,8 @@ public class GUI extends Base {
                 // Draw inhabitants.
                 gl.glPushMatrix();
                 gl.glPushAttrib(GL_CURRENT_BIT);
-                Set<Inhabitant> inhabitants = map.getTile(i, j).getInhabitants();
                 empty.bind(gl);
-                for (Inhabitant inhabitant : inhabitants) {
+                Inhabitant inhabitant = map.getTile(i, j).getInhabitant();
                     gl.glPushMatrix();
                     // TODO: replace by more meaningful, non-glut objects.
                     gl.glTranslatef(0.5f, 0.5f, 0);
@@ -268,7 +274,7 @@ public class GUI extends Base {
                         new GraphicalObjects(gl).drawCylinder(0.5f, 2);
                     }
                     gl.glPopMatrix();
-                }
+                
                 gl.glPopAttrib();
                 gl.glPopMatrix();
 
@@ -281,8 +287,8 @@ public class GUI extends Base {
         gl.glPopMatrix();
 
         gl.glPushMatrix();
-        for (Player p : game.players) {
-            for (Creature c : p.getCreatures()) {
+        for (Player p : game) {
+            for (Creature c : p) {
                 Vector currentLocation = creatureViews.get(c).getCurrentLocation();
                 gl.glTranslated(currentLocation.x(), currentLocation.y(), currentLocation.z());
                 new GraphicalObjects(gl).drawCylinder(0.5f, 2);

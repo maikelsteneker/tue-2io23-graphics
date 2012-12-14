@@ -1,4 +1,4 @@
-package view;
+package ogo.spec.game.view;
 
 
 /**

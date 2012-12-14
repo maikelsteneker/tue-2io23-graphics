@@ -1,4 +1,4 @@
-package view;
+package ogo.spec.game.view;
 
 import com.jogamp.opengl.util.FPSAnimator;
 import com.jogamp.opengl.util.gl2.GLUT;
@@ -159,10 +159,11 @@ abstract public class Base {
             gl = drawable.getGL().getGL2();
 
             // Try to load textures.
-            land = loadTexture("textures/land.jpg");
-            shallowWater = loadTexture("textures/shallow.jpg");
-            deepWater = loadTexture("textures/deep.jpg");
-            empty = loadTexture("textures/empty.jpg");
+            String path = "ogo/spec/game/textures/";
+            land = loadTexture(path + "land.jpg");
+            shallowWater = loadTexture(path + "shallow.jpg");
+            deepWater = loadTexture(path + "deep.jpg");
+            empty = loadTexture(path + "empty.jpg");
 
             // Print library version number.
             System.out.println("Using library version " + LIBRARY_VERSION);

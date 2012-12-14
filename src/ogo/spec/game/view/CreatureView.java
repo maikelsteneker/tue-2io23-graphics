@@ -1,6 +1,7 @@
-package view;
+package ogo.spec.game.view;
 
-import model.*;
+import ogo.spec.game.model.Tile;
+import ogo.spec.game.model.Creature;
 
 /**
  *
@@ -20,23 +21,23 @@ public class CreatureView {
     }
 
     public void move(double animationLength) {
-        previousLocation = creature.path.getPreviousLocation();
+        previousLocation = creature.getPath().getPreviousTile();
         t0 = timer.getTime();
         unit = timer.getSleepTime() / animationLength;
     }
 
     public Vector getCurrentLocation() {
         if (previousLocation == null) {
-            return new Vector(creature.x+0.5,creature.y+0.5,0);
+            return new Vector(creature.getPath().getCurrentTile().x()+0.5,creature.getPath().getCurrentTile().y()+0.5,0);
         } else {
-            double x = (creature.x - previousLocation.x + 0.5) / (unit * (timer.getTime() - t0));
+            double x = (creature.getPath().getCurrentTile().x() - previousLocation.x() + 0.5) / (unit * (timer.getTime() - t0));
 
-            double y = (creature.y - previousLocation.y + 0.5) / (unit * (timer.getTime() - t0));
+            double y = (creature.getPath().getCurrentTile().y() - previousLocation.y() + 0.5) / (unit * (timer.getTime() - t0));
             double z = 0;
             Vector V = new Vector(x, y, z); //vector to move over
 
-            x = previousLocation.x;
-            y = previousLocation.y;
+            x = previousLocation.x();
+            y = previousLocation.y();
             z = 0;
             Vector P = new Vector(x, y, z); //previous location
 

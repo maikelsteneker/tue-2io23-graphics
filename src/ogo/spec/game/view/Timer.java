@@ -1,4 +1,4 @@
-package view;
+package ogo.spec.game.view;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
